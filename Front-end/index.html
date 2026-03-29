@@ -23,16 +23,29 @@
     <script>
         // Функция загрузки задач с твоего бэкенда
         async function loadTasks() {
-            const response = await fetch('http://localhost:8080/tasks');
-            const tasks = await response.json();
-            const list = document.getElementById('taskList');
-            list.innerHTML = '';
-            tasks.forEach(t => {
-                const li = document.createElement('li');
-                li.textContent = t.description;
-                list.appendChild(li);
-            });
-        }
+    const response = await fetch('http://localhost:8080/tasks');
+    const tasks = await response.json();
+    const list = document.getElementById('taskList');
+    list.innerHTML = ''; 
+
+    tasks.forEach(task => {
+        const li = document.createElement('li');
+        li.innerHTML = `
+            ${task.title} 
+            <button onclick="deleteTask(${task.id})" style="margin-left: 10px; color: red;">X</button>
+        `;
+        list.appendChild(li);
+    });
+}
+
+async function deleteTask(id) {
+    if (confirm('Удалить эту задачу?')) {
+        await fetch(`http://localhost:8080/tasks/${id}`, {
+            method: 'DELETE'
+        });
+        loadTasks(); // Обновляем список после удаления
+    }
+}
 
         // Функция отправки новой задачи на бэкенд
         async function addTask() {
