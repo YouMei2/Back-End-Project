@@ -26,16 +26,16 @@
     const response = await fetch('http://localhost:8080/tasks');
     const tasks = await response.json();
     const list = document.getElementById('taskList');
-    list.innerHTML = ''; 
+    list.innerHTML = '';
 
-    tasks.forEach(task => {
-        const li = document.createElement('li');
-        li.innerHTML = `
-            ${task.title} 
-            <button onclick="deleteTask(${task.id})" style="margin-left: 10px; color: red;">X</button>
+            tasks.forEach(task => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+            ${task.description}
+            <button onclick="deleteTask(${task.id})" style="margin-left: 10px; background: red; border-radius: 4px;">X</button>
         `;
-        list.appendChild(li);
-    });
+                list.appendChild(li);
+            });
 }
 
 async function deleteTask(id) {
