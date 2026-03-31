@@ -1,65 +1,111 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <title>My Life Wheel - Tasks</title>
     <meta charset="UTF-8">
     <style>
-        body { font-family: sans-serif; max-width: 500px; margin: 50px auto; background: #f4f4f4; }
-        .container { background: white; padding: 20px; border-radius: 8px; shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        input { width: 70%; padding: 10px; }
-        button { padding: 10px; cursor: pointer; background: #28a745; color: white; border: none; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 50px auto; background: #eef2f3; }
+        .container { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h2 { color: #333; text-align: center; }
+
+        .input-group { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+        input { padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px; }
+
+        .btn-add { padding: 12px; cursor: pointer; background: #28a745; color: white; border: none; border-radius: 6px; font-weight: bold; transition: 0.3s; }
+        .btn-add:hover { background: #218838; }
+
         ul { list-style: none; padding: 0; }
-        li { background: #eee; margin: 5px 0; padding: 10px; border-left: 5px solid #28a745; }
+        li {
+            background: #fff; margin: 10px 0; padding: 15px;
+            border-radius: 8px; border-left: 6px solid #28a745;
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .task-text b { color: #28a745; text-transform: uppercase; font-size: 0.9em; }
+
+        .btn-delete { background: #dc3545; color: white; border: none; padding: 5px 12px; border-radius: 4px; cursor: pointer; }
+        .btn-delete:hover { background: #c82333; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h2>Задачи по Колесу Жизни</h2>
-        <input type="text" id="taskInput" placeholder="Что нужно сделать?">
-        <button onclick="addTask()">Добавить</button>
-        <ul id="taskList"></ul>
-    </div>
+<div class="container">
+    <h2>🚀 Мои задачи</h2>
 
-    <script>
-        // Функция загрузки задач с твоего бэкенда
-        async function loadTasks() {
-    const response = await fetch('http://localhost:8080/tasks');
-    const tasks = await response.json();
-    const list = document.getElementById('taskList');
-    list.innerHTML = '';
+    <form class="input-group" id="taskForm">
+        <input type="text" id="nameInput" placeholder="Категория (напр. Семья, Работа)" required>
+        <input type="text" id="taskInput" placeholder="Что именно нужно сделать?" required>
+        <button type="submit" class="btn-add">Добавить в список</button>
+    </form>
+
+    <ul id="taskList"></ul>
+</div>
+
+<script>
+    const API_URL = 'http://localhost:8080/tasks';
+
+    async function loadTasks() {
+        try {
+            const response = await fetch(API_URL);
+            const tasks = await response.json();
+            const list = document.getElementById('taskList');
+            list.innerHTML = '';
 
             tasks.forEach(task => {
                 const li = document.createElement('li');
                 li.innerHTML = `
-            ${task.description}
-            <button onclick="deleteTask(${task.id})" style="margin-left: 10px; background: red; border-radius: 4px;">X</button>
-        `;
+                        <div class="task-text">
+                            <b>${task.name || 'БЕЗ КАТЕГОРИИ'}</b><br>
+                            ${task.description}
+                        </div>
+                        <button class="btn-delete" onclick="deleteTask(${task.id})">Удалить</button>
+                    `;
                 list.appendChild(li);
             });
-}
-
-async function deleteTask(id) {
-    if (confirm('Удалить эту задачу?')) {
-        await fetch(`http://localhost:8080/tasks/${id}`, {
-            method: 'DELETE'
-        });
-        loadTasks(); // Обновляем список после удаления
+        } catch (err) {
+            console.error("Ошибка загрузки:", err);
+        }
     }
-}
 
-        // Функция отправки новой задачи на бэкенд
-        async function addTask() {
-            const input = document.getElementById('taskInput');
-            await fetch('http://localhost:8080/tasks', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ description: input.value })
-            });
-            input.value = '';
-            loadTasks(); // Обновляем список
+    async function addTask() {
+        const descInput = document.getElementById('taskInput');
+        const nameInput = document.getElementById('nameInput');
+
+        if (!descInput.value || !nameInput.value) {
+            alert("Заполни оба поля!");
+            return;
         }
 
-        loadTasks(); // Загрузить при старте страницы
-    </script>
+        await fetch(API_URL, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                description: descInput.value,
+                name: nameInput.value
+            })
+        });
+
+        descInput.value = '';
+        nameInput.value = '';
+        loadTasks();
+    }
+
+    async function deleteTask(id) {
+        if (confirm('Удалить эту задачу?')) {
+            await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
+            loadTasks();
+        }
+    }
+
+    loadTasks();
+
+    const taskForm = document.getElementById('taskForm');
+
+    // Слушаем событие "submit" (срабатывает и по кнопке, и по Enter)
+    taskForm.addEventListener('submit', function(event) {
+        event.preventDefault(); // Это КРИТИЧЕСКИ важно: отменяет перезагрузку страницы браузером
+        addTask(); // Вызываем твою функцию добавления
+    });
+
+</script>
 </body>
 </html>

@@ -7,6 +7,7 @@ public class Task {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String description;
+    private String name;
     public Task() {
     }
     public Long getId() {
@@ -21,4 +22,11 @@ public class Task {
     public void setDescription(String description) {
         this.description = description;
     }
+    public String getName(){
+        return name;
+    }
+    public void setName(String name){
+        this.name = name;
+    }
+
 }
