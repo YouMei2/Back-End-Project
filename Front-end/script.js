@@ -1,5 +1,8 @@
 const API_URL = 'http://localhost:8080/tasks';
 
+/**
+ * Fetches tasks from the server and renders them in the list
+ */
 async function loadTasks() {
     try {
         const response = await fetch(API_URL);
@@ -16,19 +19,22 @@ async function loadTasks() {
                         <input type="checkbox" ${task.done ? 'checked' : ''}
                                onchange="toggleTask(${task.id}, ${task.done})">
                         <div class="task-text ${task.done ? 'completed-text' : ''}">
-                            <b>${task.name || 'БЕЗ КАТЕГОРИИ'}</b><br>
+                            <b>${task.name || 'NO CATEGORY'}</b><br>
                             ${task.description}
                         </div>
                     </div>
-                    <button class="btn-delete" onclick="deleteTask(${task.id})">Удалить</button>
+                    <button class="btn-delete" onclick="deleteTask(${task.id})">Delete</button>
                 `;
             list.appendChild(li);
         });
     } catch (err) {
-        console.error("Ошибка загрузки:", err);
+        console.error("Loading error:", err);
     }
 }
 
+/**
+ * Adds a new task to the database
+ */
 async function addTask() {
     const descInput = document.getElementById('taskInput');
     const nameInput = document.getElementById('nameInput');
@@ -48,6 +54,9 @@ async function addTask() {
     loadTasks();
 }
 
+/**
+ * Toggles task status (completed/pending)
+ */
 async function toggleTask(id, currentStatus) {
     await fetch(`${API_URL}/${id}`, {
         method: 'PUT',
@@ -57,17 +66,24 @@ async function toggleTask(id, currentStatus) {
     loadTasks();
 }
 
+/**
+ * Deletes a task by its ID
+ */
 async function deleteTask(id) {
-    if (confirm('Удалить эту задачу?')) {
+    if (confirm('Delete this task?')) {
         await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
         loadTasks();
     }
 }
 
+// Event listener for task form submission
 const taskForm = document.getElementById('taskForm');
-taskForm.addEventListener('submit', function(event) {
-    event.preventDefault();
-    addTask();
-});
+if (taskForm) {
+    taskForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+        addTask();
+    });
+}
 
+// Initial task load
 loadTasks();

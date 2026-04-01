@@ -235,3 +235,33 @@ html {
     padding: 8px 20px !important;
     font-size: 14px !important;
 }
+
+/* --- AUTH PAGES STYLING --- */
+
+/* Extra spacing for the auth card */
+.auth-container {
+    margin-top: 150px !important;
+    text-align: center;
+}
+
+/* Styling for the "Login here" / "Create account" links */
+.auth-footer {
+    margin-top: 20px;
+    font-size: 14px;
+    color: #666;
+}
+
+.auth-footer a {
+    color: #28a745;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.auth-footer a:hover {
+    text-decoration: underline;
+}
+
+/* Making inputs in auth form look more like a stack */
+.auth-container .input-group {
+    gap: 20px;
+}

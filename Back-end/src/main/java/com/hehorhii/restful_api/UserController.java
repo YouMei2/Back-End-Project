@@ -16,7 +16,11 @@ public class UserController {
     public List<User> getAllUsers(){
         return userRepository.findAll();
     }
-    @PostMapping User RegisterUser(@RequestBody User user){
+    @PostMapping
+    public User RegisterUser(@RequestBody User user) {
+        if(userRepository.existsByEmail(user.getEmail())){
+            throw new RuntimeException("user already exists");
+        }
         return userRepository.save(user);
     }
 }
