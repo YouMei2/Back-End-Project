@@ -1,0 +1,72 @@
+body { 
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+    max-width: 600px; 
+    margin: 50px auto; 
+    background: #eef2f3; 
+}
+
+.container { 
+    background: white; 
+    padding: 30px; 
+    border-radius: 12px; 
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
+}
+
+h2 { color: #333; text-align: center; }
+
+.input-group { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+
+input { 
+    padding: 12px; 
+    border: 1px solid #ddd; 
+    border-radius: 6px; 
+    font-size: 16px; 
+}
+
+.btn-add { 
+    padding: 12px; 
+    cursor: pointer; 
+    background: #28a745; 
+    color: white; 
+    border: none; 
+    border-radius: 6px; 
+    font-weight: bold; 
+    transition: 0.3s; 
+}
+
+.btn-add:hover { background: #218838; }
+
+ul { list-style: none; padding: 0; }
+
+li {
+    background: #fff; 
+    margin: 10px 0; 
+    padding: 15px;
+    border-radius: 8px; 
+    border-left: 6px solid #28a745;
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    transition: 0.2s;
+}
+
+.completed-task { border-left-color: #6c757d; opacity: 0.6; }
+.completed-text { text-decoration: line-through; color: #6c757d; }
+
+.task-content { display: flex; align-items: center; gap: 15px; }
+.task-text b { color: #28a745; text-transform: uppercase; font-size: 0.9em; }
+.completed-text b { color: #6c757d; }
+
+.btn-delete { 
+    background: #dc3545; 
+    color: white; 
+    border: none; 
+    padding: 5px 12px; 
+    border-radius: 4px; 
+    cursor: pointer; 
+}
+
+.btn-delete:hover { background: #c82333; }
+
+input[type="checkbox"] { transform: scale(1.3); cursor: pointer; }
