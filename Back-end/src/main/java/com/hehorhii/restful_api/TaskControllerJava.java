@@ -27,4 +27,12 @@ public class TaskControllerJava {
     public void deleteTask(@PathVariable Long id) {
         taskRepository.deleteById(id);
     }
+    @PutMapping("/{id}")
+    public Task updateTask(@PathVariable Long id, @RequestBody Task taskDetails) {
+        Task task = taskRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Task not found"));
+
+        task.setDone(taskDetails.isDone()); // Обновляем только статус
+        return taskRepository.save(task);
+    }
 }

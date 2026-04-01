@@ -8,6 +8,8 @@ public class Task {
     private Long id;
     private String description;
     private String name;
+    private boolean isDone = false;
+
     public Task() {
     }
     public Long getId() {
@@ -27,6 +29,12 @@ public class Task {
     }
     public void setName(String name){
         this.name = name;
+    }
+    public boolean isDone() {
+        return isDone;
+    }
+    public void setDone(boolean done) {
+        isDone = done;
     }
 
 }

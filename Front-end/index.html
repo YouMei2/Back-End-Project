@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <title>My Life Wheel - Tasks</title>
     <meta charset="UTF-8">
     <style>
+        /* ТВОИ СТИЛИ */
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 50px auto; background: #eef2f3; }
         .container { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         h2 { color: #333; text-align: center; }
@@ -20,16 +21,26 @@
             border-radius: 8px; border-left: 6px solid #28a745;
             display: flex; justify-content: space-between; align-items: center;
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: 0.2s;
         }
+
+        /* НОВЫЙ СТИЛЬ ДЛЯ ВЫПОЛНЕННЫХ ЗАДАЧ */
+        .completed-task { border-left-color: #6c757d; opacity: 0.6; }
+        .completed-text { text-decoration: line-through; color: #6c757d; }
+
+        .task-content { display: flex; align-items: center; gap: 15px; }
         .task-text b { color: #28a745; text-transform: uppercase; font-size: 0.9em; }
+        .completed-text b { color: #6c757d; } /* Серый цвет для категории при выполнении */
 
         .btn-delete { background: #dc3545; color: white; border: none; padding: 5px 12px; border-radius: 4px; cursor: pointer; }
         .btn-delete:hover { background: #c82333; }
+
+        input[type="checkbox"] { transform: scale(1.3); cursor: pointer; }
     </style>
 </head>
 <body>
 <div class="container">
-    <h2>🚀 Мои задачи</h2>
+    <h2>Мои задачи</h2>
 
     <form class="input-group" id="taskForm">
         <input type="text" id="nameInput" placeholder="Категория (напр. Семья, Работа)" required>
@@ -52,10 +63,17 @@
 
             tasks.forEach(task => {
                 const li = document.createElement('li');
+                // Если задача выполнена, добавляем специальный класс для всей строки
+                if (task.done) li.classList.add('completed-task');
+
                 li.innerHTML = `
-                        <div class="task-text">
-                            <b>${task.name || 'БЕЗ КАТЕГОРИИ'}</b><br>
-                            ${task.description}
+                        <div class="task-content">
+                            <input type="checkbox" ${task.done ? 'checked' : ''}
+                                   onchange="toggleTask(${task.id}, ${task.done})">
+                            <div class="task-text ${task.done ? 'completed-text' : ''}">
+                                <b>${task.name || 'БЕЗ КАТЕГОРИИ'}</b><br>
+                                ${task.description}
+                            </div>
                         </div>
                         <button class="btn-delete" onclick="deleteTask(${task.id})">Удалить</button>
                     `;
@@ -66,26 +84,33 @@
         }
     }
 
+    // ТВОЯ ФУНКЦИЯ ДОБАВЛЕНИЯ (с исправлениями)
     async function addTask() {
         const descInput = document.getElementById('taskInput');
         const nameInput = document.getElementById('nameInput');
-
-        if (!descInput.value || !nameInput.value) {
-            alert("Заполни оба поля!");
-            return;
-        }
 
         await fetch(API_URL, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({
                 description: descInput.value,
-                name: nameInput.value
+                name: nameInput.value,
+                done: false // Новая задача всегда не выполнена
             })
         });
 
         descInput.value = '';
         nameInput.value = '';
+        loadTasks();
+    }
+
+    // НОВАЯ ФУНКЦИЯ ДЛЯ ОБНОВЛЕНИЯ (PUT)
+    async function toggleTask(id, currentStatus) {
+        await fetch(`${API_URL}/${id}`, {
+            method: 'PUT',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ done: !currentStatus })
+        });
         loadTasks();
     }
 
@@ -96,16 +121,13 @@
         }
     }
 
-    loadTasks();
-
     const taskForm = document.getElementById('taskForm');
-
-    // Слушаем событие "submit" (срабатывает и по кнопке, и по Enter)
     taskForm.addEventListener('submit', function(event) {
-        event.preventDefault(); // Это КРИТИЧЕСКИ важно: отменяет перезагрузку страницы браузером
-        addTask(); // Вызываем твою функцию добавления
+        event.preventDefault();
+        addTask();
     });
 
+    loadTasks();
 </script>
 </body>
 </html>
