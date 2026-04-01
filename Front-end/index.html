@@ -1,18 +1,27 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
-    <title>My Life Wheel - Tasks</title>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Life Wheel - Tasks</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+<div class="header">
+    <div class="logo">My Life Wheel</div>
+    <div class="nav-btns">
+        <button onclick="location.href='register.html'">Register</button>
+        <button onclick="location.href='login.html'">Login</button>
+    </div>
+</div>
+
 <div class="container">
-    <h2>Мои задачи</h2>
+    <h2>My Tasks</h2>
 
     <form class="input-group" id="taskForm">
-        <input type="text" id="nameInput" placeholder="Категория (напр. Семья, Работа)" required>
-        <input type="text" id="taskInput" placeholder="Что именно нужно сделать?" required>
-        <button type="submit" class="btn-add">Добавить в список</button>
+        <input type="text" id="nameInput" placeholder="Category" required>
+        <input type="text" id="taskInput" placeholder="What needs to be done?" required>
+        <button type="submit" class="btn-add">Add Task</button>
     </form>
 
     <ul id="taskList"></ul>
