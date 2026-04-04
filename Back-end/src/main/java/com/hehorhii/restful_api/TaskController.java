@@ -7,16 +7,19 @@ import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "*")
-@RequestMapping({"/tasks", "/tasks"})
-public class TaskControllerJava {
+@RequestMapping({"/tasks"})
+public class TaskController {
     private final TaskRepository taskRepository;
 
-    public TaskControllerJava(TaskRepository taskRepository) {
+    public TaskController(TaskRepository taskRepository) {
         this.taskRepository = taskRepository;
     }
 
     @GetMapping
-    public List<Task> getAllTasks(){
+    public List<Task> getAllTasks(@RequestParam(required = false) Long userId){
+        if(userId != null){
+            return taskRepository.findByUserId(userId);
+        }
         return taskRepository.findAll();
     }
     @PostMapping

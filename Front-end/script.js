@@ -4,10 +4,16 @@ const API_URL = 'http://localhost:8080/tasks';
  * Fetches tasks from the server and renders them in the list
  */
 async function loadTasks() {
+    const userId = localStorage.getItem('userId'); // Достаем ID юзера
+    const list = document.getElementById('taskList');
+
+    if (!list || !userId) return; // Если нет списка или юзер не залогинен — выходим
+
     try {
-        const response = await fetch(API_URL);
+        // Запрашиваем задачи конкретного юзера: /tasks?userId=1
+        const response = await fetch(`${API_URL}?userId=${userId}`);
         const tasks = await response.json();
-        const list = document.getElementById('taskList');
+
         list.innerHTML = '';
 
         tasks.forEach(task => {
@@ -38,6 +44,12 @@ async function loadTasks() {
 async function addTask() {
     const descInput = document.getElementById('taskInput');
     const nameInput = document.getElementById('nameInput');
+    const userId = localStorage.getItem('userId'); // Берем ID для привязки
+
+    if (!userId) {
+        alert("Please log in first!");
+        return;
+    }
 
     await fetch(API_URL, {
         method: 'POST',
@@ -45,7 +57,8 @@ async function addTask() {
         body: JSON.stringify({
             description: descInput.value,
             name: nameInput.value,
-            done: false
+            done: false,
+            userId: parseInt(userId) // Отправляем ID на сервер
         })
     });
 
@@ -87,3 +100,38 @@ if (taskForm) {
 
 // Initial task load
 loadTasks();
+
+/**
+ * Manages the visibility of navigation buttons in the header
+ */
+function checkAuth() {
+    const userId = localStorage.getItem('userId');
+    const userName = localStorage.getItem('userName');
+
+    const guestBtns = document.getElementById('guest-btns');
+    const userProfile = document.getElementById('user-profile');
+    const welcomeText = document.getElementById('welcome-text');
+
+    if (userId) {
+        // If logged in: hide Register/Login, show Profile
+        guestBtns.style.display = 'none';
+        userProfile.style.display = 'flex';
+        welcomeText.textContent = `Hello, ${userName || 'User'}!`;
+    } else {
+        // If not logged in: show guest buttons
+        guestBtns.style.display = 'block';
+        userProfile.style.display = 'none';
+    }
+}
+
+/**
+ * System logout function
+ */
+function logout() {
+    localStorage.removeItem('userId');
+    localStorage.removeItem('userName');
+    window.location.reload(); // Refresh the page to update the UI
+}
+
+// Execute auth check as soon as the DOM is fully loaded
+document.addEventListener('DOMContentLoaded', checkAuth);

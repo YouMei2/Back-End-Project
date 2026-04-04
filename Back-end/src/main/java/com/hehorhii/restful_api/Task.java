@@ -9,6 +9,7 @@ public class Task {
     private String description;
     private String name;
     private boolean isDone = false;
+    private Long userId;
 
     public Task() {
     }
@@ -35,6 +36,13 @@ public class Task {
     }
     public void setDone(boolean done) {
         isDone = done;
+    }
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
 }

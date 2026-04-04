@@ -9,9 +9,15 @@
 <body>
 <div class="header">
     <div class="logo">My Life Wheel</div>
-    <div class="nav-btns">
-        <button onclick="location.href='register.html'">Register</button>
-        <button onclick="location.href='login.html'">Login</button>
+    <div class="nav-btns" id="auth-section">
+        <div id="guest-btns">
+            <button onclick="location.href='register.html'">Register</button>
+            <button onclick="location.href='login.html'">Login</button>
+        </div>
+        <div id="user-profile" style="display: none; align-items: center; gap: 15px;">
+            <span id="welcome-text" style="font-weight: bold; color: #2e7d32;"></span>
+            <button onclick="logout()" class="btn-logout">Logout</button>
+        </div>
     </div>
 </div>
 
