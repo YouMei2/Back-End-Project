@@ -16,26 +16,28 @@ public class TaskController {
     }
 
     @GetMapping
-    public List<Task> getAllTasks(@RequestParam(required = false) Long userId){
-        if(userId != null){
+    public List<Task> getAllTasks(@RequestParam(name = "userId", required = false) Long userId) {
+        if (userId != null) {
             return taskRepository.findByUserId(userId);
         }
         return taskRepository.findAll();
     }
+
     @PostMapping
     public Task createTask(@RequestBody Task task){
         return taskRepository.save(task);
     }
+
     @DeleteMapping("/{id}")
-    public void deleteTask(@PathVariable Long id) {
+    public void deleteTask(@PathVariable(name = "id") Long id) {
         taskRepository.deleteById(id);
     }
     @PutMapping("/{id}")
-    public Task updateTask(@PathVariable Long id, @RequestBody Task taskDetails) {
+    public Task updateTask(@PathVariable(name = "id") Long id, @RequestBody Task taskDetails) {
         Task task = taskRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Task not found"));
 
-        task.setDone(taskDetails.isDone()); // Обновляем только статус
+        task.setDone(taskDetails.isDone());
         return taskRepository.save(task);
     }
 }

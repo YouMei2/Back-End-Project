@@ -13,7 +13,8 @@ public class User {
     private String user;
     private String email;
     private String password;
-
+    private String code;
+    private boolean enabled = false;
 
     public User(){}
     public void setId(Long id) {
@@ -43,4 +44,9 @@ public class User {
     public String getEmail() {
         return email;
     }
+
+    public String getCode() { return code; }
+    public void setCode(String code) { this.code = code; }
+    public boolean isEnabled() { return enabled; }
+    public void setEnabled(boolean enabled) { this.enabled = enabled; }
 }

@@ -1,137 +1,143 @@
 const API_URL = 'http://localhost:8080/tasks';
 
-/**
- * Fetches tasks from the server and renders them in the list
- */
+function checkAuth() {
+    const userId = localStorage.getItem('userId');
+    const userName = localStorage.getItem('userName');
+    const guestBtns = document.getElementById('guest-btns');
+    const userProfile = document.getElementById('user-profile');
+    const welcomeText = document.getElementById('welcome-text');
+
+    if (userId && userId !== "null") {
+        if (guestBtns) guestBtns.style.display = 'none';
+        if (userProfile) {
+            userProfile.style.display = 'flex';
+            welcomeText.textContent = `Hello, ${userName || 'User'}!`;
+        }
+    } else {
+        if (guestBtns) guestBtns.style.display = 'flex';
+        if (userProfile) userProfile.style.display = 'none';
+    }
+}
+
 async function loadTasks() {
-    const userId = localStorage.getItem('userId'); // Достаем ID юзера
+    const userId = localStorage.getItem('userId');
     const list = document.getElementById('taskList');
 
-    if (!list || !userId) return; // Если нет списка или юзер не залогинен — выходим
+    if (!list || !userId) return;
 
     try {
-        // Запрашиваем задачи конкретного юзера: /tasks?userId=1
         const response = await fetch(`${API_URL}?userId=${userId}`);
+
+        // Защита от 500 ошибки: если сервер упал, не пытаемся читать JSON
+        if (!response.ok) {
+            console.error("Ошибка сервера:", response.status);
+            return;
+        }
+
         const tasks = await response.json();
 
+        // ОЧИСТКА СПИСКА: чтобы задачи не дублировались при каждом обновлении
         list.innerHTML = '';
 
-        tasks.forEach(task => {
-            const li = document.createElement('li');
-            if (task.done) li.classList.add('completed-task');
+        // Проверка: если пришел массив, отрисовываем его
+        if (Array.isArray(tasks)) {
+            tasks.forEach(task => {
+                const li = document.createElement('li');
+                // Учитываем, что поле может называться done или isDone
+                const isDone = task.done || task.isDone;
 
-            li.innerHTML = `
+                if (isDone) li.classList.add('completed-task');
+
+                li.innerHTML = `
                     <div class="task-content">
-                        <input type="checkbox" ${task.done ? 'checked' : ''}
-                               onchange="toggleTask(${task.id}, ${task.done})">
-                        <div class="task-text ${task.done ? 'completed-text' : ''}">
-                            <b>${task.name || 'NO CATEGORY'}</b><br>
-                            ${task.description}
+                        <input type="checkbox" ${isDone ? 'checked' : ''} 
+                               onchange="toggleTask(${task.id}, ${isDone})">
+                        <div class="task-text ${isDone ? 'completed-text' : ''}">
+                            <b>${task.name || 'БЕЗ КАТЕГОРИИ'}</b><br>
+                            ${task.description || 'Нет описания'}
                         </div>
                     </div>
                     <button class="btn-delete" onclick="deleteTask(${task.id})">Delete</button>
                 `;
-            list.appendChild(li);
-        });
+                list.appendChild(li);
+            });
+        }
     } catch (err) {
-        console.error("Loading error:", err);
+        console.error("Ошибка загрузки задач:", err);
     }
 }
 
-/**
- * Adds a new task to the database
- */
 async function addTask() {
     const descInput = document.getElementById('taskInput');
     const nameInput = document.getElementById('nameInput');
-    const userId = localStorage.getItem('userId'); // Берем ID для привязки
+    const userId = localStorage.getItem('userId');
 
     if (!userId) {
         alert("Please log in first!");
         return;
     }
 
-    await fetch(API_URL, {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({
-            description: descInput.value,
-            name: nameInput.value,
-            done: false,
-            userId: parseInt(userId) // Отправляем ID на сервер
-        })
-    });
+    try {
+        const response = await fetch(API_URL, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                description: descInput.value,
+                name: nameInput.value,
+                done: false,
+                userId: parseInt(userId)
+            })
+        });
 
-    descInput.value = '';
-    nameInput.value = '';
-    loadTasks();
+        if (response.ok) {
+            descInput.value = '';
+            nameInput.value = '';
+            // Вызываем загрузку только ОДИН раз после успешного добавления
+            await loadTasks();
+        }
+    } catch (err) {
+        console.error("Ошибка добавления:", err);
+    }
 }
 
-/**
- * Toggles task status (completed/pending)
- */
 async function toggleTask(id, currentStatus) {
-    await fetch(`${API_URL}/${id}`, {
-        method: 'PUT',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ done: !currentStatus })
-    });
-    loadTasks();
+    try {
+        const response = await fetch(`${API_URL}/${id}`, {
+            method: 'PUT',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ done: !currentStatus })
+        });
+        if (response.ok) await loadTasks();
+    } catch (err) {
+        console.error("Ошибка переключения:", err);
+    }
 }
 
-/**
- * Deletes a task by its ID
- */
 async function deleteTask(id) {
-    if (confirm('Delete this task?')) {
-        await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
-        loadTasks();
+    if (confirm('Are you sure?')) {
+        try {
+            const response = await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
+            if (response.ok) await loadTasks();
+        } catch (err) {
+            console.error("Ошибка удаления:", err);
+        }
     }
 }
 
-// Event listener for task form submission
-const taskForm = document.getElementById('taskForm');
-if (taskForm) {
-    taskForm.addEventListener('submit', function(event) {
-        event.preventDefault();
-        addTask();
-    });
-}
-
-// Initial task load
-loadTasks();
-
-/**
- * Manages the visibility of navigation buttons in the header
- */
-function checkAuth() {
-    const userId = localStorage.getItem('userId');
-    const userName = localStorage.getItem('userName');
-
-    const guestBtns = document.getElementById('guest-btns');
-    const userProfile = document.getElementById('user-profile');
-    const welcomeText = document.getElementById('welcome-text');
-
-    if (userId) {
-        // If logged in: hide Register/Login, show Profile
-        guestBtns.style.display = 'none';
-        userProfile.style.display = 'flex';
-        welcomeText.textContent = `Hello, ${userName || 'User'}!`;
-    } else {
-        // If not logged in: show guest buttons
-        guestBtns.style.display = 'block';
-        userProfile.style.display = 'none';
-    }
-}
-
-/**
- * System logout function
- */
 function logout() {
-    localStorage.removeItem('userId');
-    localStorage.removeItem('userName');
-    window.location.reload(); // Refresh the page to update the UI
+    localStorage.clear();
+    window.location.reload();
 }
 
-// Execute auth check as soon as the DOM is fully loaded
-document.addEventListener('DOMContentLoaded', checkAuth);
+document.addEventListener('DOMContentLoaded', () => {
+    checkAuth();
+    loadTasks();
+
+    const taskForm = document.getElementById('taskForm');
+    if (taskForm) {
+        taskForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            addTask();
+        });
+    }
+});

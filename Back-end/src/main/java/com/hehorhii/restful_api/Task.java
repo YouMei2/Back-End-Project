@@ -6,9 +6,10 @@ public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String description;
     private String name;
-    private boolean isDone = false;
+    private boolean IsDone = false;
     private Long userId;
 
     public Task() {
@@ -32,10 +33,10 @@ public class Task {
         this.name = name;
     }
     public boolean isDone() {
-        return isDone;
+        return IsDone;
     }
-    public void setDone(boolean done) {
-        isDone = done;
+    public void setDone(boolean IsDone) {
+        this.IsDone = IsDone;
     }
     public Long getUserId() {
         return userId;
