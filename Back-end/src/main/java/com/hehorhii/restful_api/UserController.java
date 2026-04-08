@@ -36,7 +36,7 @@ public class UserController {
         }
         String encodedPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(encodedPassword);
-        String verificationCode = "123456";
+        String verificationCode = VerificationService.generateCode();
         user.setCode(verificationCode);
         user.setEnabled(false);
 
