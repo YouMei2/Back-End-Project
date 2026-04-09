@@ -31,14 +31,14 @@ if (loginForm) {
                 // Parse the JSON response from the server
                 const user = await response.json();
 
-                // --- AUTHENTICATION STORAGE ---
+                // AUTHENTICATION STORAGE
                 // Save the User ID so script.js can handle protected UI and tasks
                 localStorage.setItem('userId', user.id);
                 // Set login status flag
                 localStorage.setItem('isLoggedIn', 'true');
                 // Store the username for the welcome message
                 localStorage.setItem('userName', user.user);
-                // ------------------------------
+                //
 
                 alert(`Welcome, ${user.user}!`);
 

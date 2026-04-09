@@ -25,7 +25,6 @@ if (registerForm) {
             });
 
             if (response.ok) {
-                // Сохраняем email, чтобы на странице верификации знать, кого подтверждать
                 localStorage.setItem('emailForVerification', userData.email);
                 alert('Account created! Check your email.');
                 window.location.href = 'verify.html';

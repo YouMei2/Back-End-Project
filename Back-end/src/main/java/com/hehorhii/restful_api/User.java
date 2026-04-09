@@ -1,9 +1,8 @@
 package com.hehorhii.restful_api;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+
+import java.time.LocalDateTime;
 
 @Entity
 public class User {
@@ -15,8 +14,12 @@ public class User {
     private String password;
     private String code;
     private boolean enabled = false;
+    @Column(name = "code_created_at", columnDefinition = "DATETIME")
+    private LocalDateTime codeCreatedAt;
 
-    public User(){}
+    // constructor
+    public User() {}
+
     public void setId(Long id) {
         this.id = id;
     }
@@ -26,27 +29,29 @@ public class User {
     public void setUser(String user) {
         this.user = user;
     }
-
     public String getUser() {
         return user;
     }
     public void setPassword(String password) {
         this.password = password;
     }
-
     public String getPassword() {
         return password;
     }
     public void setEmail(String email) {
         this.email = email;
     }
-
     public String getEmail() {
         return email;
     }
-
     public String getCode() { return code; }
     public void setCode(String code) { this.code = code; }
     public boolean isEnabled() { return enabled; }
     public void setEnabled(boolean enabled) { this.enabled = enabled; }
+    public void setCodeCreatedAt(LocalDateTime codeCreatedAt) {
+        this.codeCreatedAt = codeCreatedAt;
+    }
+    public LocalDateTime getCodeCreatedAt() {
+        return codeCreatedAt;
+    }
 }

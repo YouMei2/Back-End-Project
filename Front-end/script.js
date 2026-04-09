@@ -28,7 +28,6 @@ async function loadTasks() {
     try {
         const response = await fetch(`${API_URL}?userId=${userId}`);
 
-        // Защита от 500 ошибки: если сервер упал, не пытаемся читать JSON
         if (!response.ok) {
             console.error("Ошибка сервера:", response.status);
             return;
@@ -36,10 +35,8 @@ async function loadTasks() {
 
         const tasks = await response.json();
 
-        // ОЧИСТКА СПИСКА: чтобы задачи не дублировались при каждом обновлении
         list.innerHTML = '';
 
-        // Проверка: если пришел массив, отрисовываем его
         if (Array.isArray(tasks)) {
             tasks.forEach(task => {
                 const li = document.createElement('li');
