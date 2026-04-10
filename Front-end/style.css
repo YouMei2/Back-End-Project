@@ -1,41 +1,120 @@
+/* --- БАЗОВЫЕ НАСТРОЙКИ --- */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    max-width: 600px;
-    margin: 50px auto;
+    max-width: 800px;
+    margin: 0 auto;
     background: #eef2f3;
+    padding-top: 100px;
+    overflow-x: hidden;
 }
 
+/* --- ФИКСИРОВАННЫЙ ХЕДЕР --- */
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 70px;
+    background: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 5%;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    z-index: 9999;
+    box-sizing: border-box;
+}
+
+.logo {
+    color: #28a745 !important; /* Тот самый зеленый */
+    font-weight: 800 !important;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 1.4rem !important;
+}
+
+.nav-btns {
+    display: flex;
+    gap: 15px;
+}
+
+.nav-btns button {
+    padding: 8px 20px !important;
+    border-radius: 8px !important;
+    font-size: 14px !important;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+/* REGISTER button */
+.nav-btns button:first-child {
+    background-color: #28a745 !important;
+    color: white !important;
+    border: 2px solid #28a745 !important;
+}
+
+.nav-btns button:first-child:hover {
+    background-color: #218838 !important;
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3) !important;
+}
+
+/* LOGIN button */
+.nav-btns button:last-child {
+    background-color: white !important;
+    color: #555 !important;
+    border: 2px solid #ddd !important;
+}
+
+.nav-btns button:last-child:hover {
+    background-color: #f8f9fa !important;
+    border-color: #bbb !important;
+    color: #333 !important;
+}
+
+/* --- КОНТЕЙНЕРЫ --- */
 .container {
     background: white;
     padding: 30px;
     border-radius: 12px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    margin-top: 120px !important;
+    position: relative;
+    z-index: 1;
 }
 
-h2 { color: #333; text-align: center; }
+h2 { color: #333; text-align: center; font-weight: 800; }
 
+/* --- ФОРМЫ (Login/Register и задачи) --- */
 .input-group { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
 
-input {
+input, select {
     padding: 12px;
     border: 1px solid #ddd;
     border-radius: 6px;
     font-size: 16px;
 }
 
-.btn-add {
+/* Кнопка Sign In / Add Task — Возвращаем яркий зеленый */
+.btn-add, .auth-container button, button[type="submit"] {
     padding: 12px;
     cursor: pointer;
-    background: #28a745;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    font-weight: bold;
+    background: #28a745 !important; /* Насыщенный зеленый */
+    color: white !important;
+    border: none !important;
+    border-radius: 6px !important;
+    font-weight: bold !important;
+    font-size: 16px;
     transition: 0.3s;
 }
 
-.btn-add:hover { background: #218838; }
+.btn-add:hover, .auth-container button:hover {
+    background: #218838 !important;
+    box-shadow: 0 4px 10px rgba(40, 167, 69, 0.2);
+}
 
+/* --- СПИСОК ЗАДАЧ --- */
 ul { list-style: none; padding: 0; }
 
 li {
@@ -49,6 +128,11 @@ li {
     align-items: center;
     box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     transition: 0.2s;
+}
+
+li:hover {
+    transform: translateX(10px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
 }
 
 .completed-task { border-left-color: #6c757d; opacity: 0.6; }
@@ -69,182 +153,86 @@ li {
 
 .btn-delete:hover { background: #c82333; }
 
-input[type="checkbox"] { transform: scale(1.3); cursor: pointer; }
-
-/* Navigation button styles in the header */
-.nav-btns {
-    display: flex;
-    gap: 10px;
-}
-
-.nav-btns button {
-    background-color: transparent;
-    color: #555;
-    border: 2px solid #ddd;
-    padding: 8px 18px;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-size: 14px;
-}
-
-/* Registration button - making it slightly more prominent */
-.nav-btns button:first-child {
-    border-color: #28a745;
-    color: #28a745;
-}
-
-.nav-btns button:first-child:hover {
-    background-color: #28a745;
-    color: white;
-    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.2);
-}
-
-/* Login button - more neutral */
-.nav-btns button:last-child:hover {
-    background-color: #f0f0f0;
-    border-color: #bbb;
-    color: #333;
-}
-
-/* Active effect on click */
-.nav-btns button:active {
-    transform: scale(0.95);
-}
-
-.header {
-    display: flex;
-    justify-content: space-between; /* Logo left, buttons right */
-    align-items: center;
-    background: white;
-    padding: 15px 5%; /* Side paddings to prevent sticking to edges */
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+/* --- ПРОГРЕСС-БАР --- */
+.progress-container {
     width: 100%;
-    position: absolute; /* Fix to top */
-    top: 0;
-    left: 0;
+    background: #eee;
+    height: 10px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    overflow: hidden;
 }
 
-/* Prevent content from going under the header */
-body {
-    padding-top: 100px;
-}
-
-/* Layering button styles */
-.nav-btns {
-    display: flex;
-    gap: 15px;
-}
-
-.nav-btns button {
-    background: white;
-    border: 2px solid #28a745;
-    color: #28a745;
-    padding: 8px 20px;
-    border-radius: 8px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.nav-btns button:hover {
+#progressBar {
+    height: 100%;
     background: #28a745;
-    color: white;
-    box-shadow: 0 4px 10px rgba(40, 167, 69, 0.2);
+    width: 0%;
+    transition: width 0.5s ease;
 }
 
-/* Making the Login button more subtle */
-.nav-btns button:last-child {
-    border-color: #ddd;
-    color: #666;
-}
-
-.nav-btns button:last-child:hover {
-    background: #f0f0f0;
-    border-color: #bbb;
-}
-
-.header {
-    position: fixed;    /* Fix relative to browser window, not body */
-    top: 0;
-    left: 0;
-    width: 100vw;       /* Stretch to full screen width */
-    z-index: 9999;      /* Ensure it stays on top */
-    box-sizing: border-box; /* Prevent padding from expanding width */
-    padding: 10px 5%;   /* Screen edge offsets */
-}
-
-/* Restore normal display for your content */
-.container {
-    margin-top: 120px !important; /* Provide space for the fixed header */
-    position: relative;
-    z-index: 1;
-}
-
-/* Eliminate horizontal scrolling conflicts */
-html {
-    overflow-x: hidden;
-}
-
-/* Ensure button text doesn't wrap if header shrinks */
-.nav-btns button {
-    white-space: nowrap;
-}
-
-/* --- FINAL HEADER POLISH --- */
-
-/* Stylish green logo */
-.logo {
-    color: #28a745 !important;
-    font-weight: 800 !important;
+/* --- ПРИОРИТЕТЫ --- */
+.priority-badge {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: bold;
     text-transform: uppercase;
-    letter-spacing: 1px;
-    font-size: 1.4rem !important;
+    margin-bottom: 5px;
+    display: inline-block;
 }
 
-/* REGISTER button (First child) - Now permanently green */
-.nav-btns button:first-child {
-    background-color: #28a745 !important;
-    color: white !important;
-    border: 2px solid #28a745 !important;
+/* Когда задача выполнена — весь блок тускнеет */
+.completed-task {
+    border-left-color: #6c757d !important;
+    opacity: 0.6;
 }
 
-.nav-btns button:first-child:hover {
-    background-color: #218838 !important;
-    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3) !important;
+/* Текст внутри перечеркивается */
+.completed-text {
+    text-decoration: line-through !important;
+    color: #6c757d !important;
 }
 
-/* LOGIN button (Last child) - Neutral, no green glow */
-.nav-btns button:last-child {
-    background-color: white !important;
-    color: #555 !important;
-    border: 2px solid #ddd !important;
+.prio-low { background: #e8f5e9; color: #2e7d32; }
+.prio-medium { background: #fff3e0; color: #ef6c00; }
+.prio-high { background: #ffebee; color: #c62828; }
+.prio-goal { background: #e3f2fd; color: #1565c0; }
+
+/* --- КОЛЕСО БАЛАНСА --- */
+.wheel-card {
+    background: #ffffff;
+    padding: 50px;
+    border-radius: 24px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 1px solid rgba(0, 0, 0, 0.03);
+    margin: 50px auto;
 }
 
-.nav-btns button:last-child:hover {
-    background-color: #f8f9fa !important;
-    border-color: #bbb !important;
-    color: #333 !important;
-    box-shadow: none !important; /* Remove glow if present */
+.wheel-title {
+    font-size: 28px;
+    font-weight: 800;
+    color: #1a1a1a;
+    margin-bottom: 40px;
+    letter-spacing: -0.5px;
+    border-bottom: 3px solid #28a745;
+    padding-bottom: 10px;
 }
 
-/* General button styling for a clean look */
-.nav-btns button {
-    border-radius: 8px !important;
-    padding: 8px 20px !important;
-    font-size: 14px !important;
+.canvas-wrapper {
+    width: 550px;
+    height: 550px;
+    position: relative;
 }
 
-/* --- AUTH PAGES STYLING --- */
-
-/* Extra spacing for the auth card */
+/* --- AUTH SPECIFIC --- */
 .auth-container {
     margin-top: 150px !important;
     text-align: center;
 }
 
-/* Styling for the "Login here" / "Create account" links */
 .auth-footer {
     margin-top: 20px;
     font-size: 14px;
@@ -257,11 +245,6 @@ html {
     font-weight: bold;
 }
 
-.auth-footer a:hover {
-    text-decoration: underline;
-}
+.auth-footer a:hover { text-decoration: underline; }
 
-/* Making inputs in auth form look more like a stack */
-.auth-container .input-group {
-    gap: 20px;
-}
+html { overflow-x: hidden; }

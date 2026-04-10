@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Life Wheel - Tasks</title>
+    <title>My Life Wheel - Tasks & Balance</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -24,13 +24,29 @@
 <div class="container">
     <h2>My Tasks</h2>
 
+    <div class="daily-progress"><div class="progress-fill" id="progressBar"></div></div>
+
     <form class="input-group" id="taskForm">
-        <input type="text" id="nameInput" placeholder="Category" required>
-        <input type="text" id="taskInput" placeholder="What needs to be done?" required>
+        <input type="text" id="nameInput" placeholder="Категория (Здоровье, Финансы...)" required>
+        <input type="text" id="taskInput" placeholder="Что нужно сделать?" required>
+        <select id="priorityInput" style="padding: 12px; border-radius: 6px; border: 1px solid #ddd;">
+            <option value="low">🌱 Простая задача</option>
+            <option value="medium">⚡ Средняя задача</option>
+            <option value="high">🔥 Важная задача</option>
+            <option value="goal">🏆 Личная цель</option>
+        </select>
         <button type="submit" class="btn-add">Add Task</button>
     </form>
-
     <ul id="taskList"></ul>
+</div>
+
+<div class="container wheel-card-container">
+    <div class="wheel-card">
+        <h2 class="wheel-title">Колесо Жизни</h2>
+        <div class="canvas-wrapper">
+            <canvas id="balanceChart" width="550" height="550"></canvas>
+        </div>
+    </div>
 </div>
 
 <script src="script.js"></script>
