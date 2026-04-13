@@ -137,23 +137,35 @@ async function loadWheelData() {
     const userId = localStorage.getItem('userId');
     if (!userId) return;
 
+    // Начальные пустые данные на случай ошибки
+    const defaultData = [
+        { label: 'Здоровье и спорт', key: 'health', score: 0 },
+        { label: 'Друзья и окружение', key: 'friends', score: 0 },
+        { label: 'Отношения', key: 'family', score: 0 },
+        { label: 'Карьера и бизнес', key: 'work', score: 0 },
+        { label: 'Финансы', key: 'finance', score: 0 },
+        { label: 'Духовность и творчество', key: 'spiritual', score: 0 },
+        { label: 'Личностный рост', key: 'learning', score: 0 },
+        { label: 'Яркость жизни', key: 'rest', score: 0 }
+    ];
+
     try {
         const response = await fetch(`${WHEEL_API}/${userId}`);
+        if (!response.ok) throw new Error("Backend offline");
+
         const data = await response.json();
 
-        const wheelData = [
-            { label: 'Здоровье и спорт', key: 'health', score: data.health || 0 },
-            { label: 'Друзья и окружение', key: 'friends', score: data.friends || 0 },
-            { label: 'Отношения', key: 'family', score: data.family || 0 },
-            { label: 'Карьера и бизнес', key: 'work', score: data.work || 0 },
-            { label: 'Финансы', key: 'finance', score: data.finance || 0 },
-            { label: 'Духовность и творчество', key: 'spiritual', score: data.spiritual || 0 },
-            { label: 'Личностный рост', key: 'learning', score: data.learning || 0 },
-            { label: 'Яркость жизни', key: 'rest', score: data.rest || 0 }
-        ];
+        // Формируем данные из ответа сервера
+        const wheelData = defaultData.map(item => ({
+            ...item,
+            score: data[item.key] || 0
+        }));
 
         renderPerfectWheel('balanceChart', wheelData);
-    } catch (err) { console.error("Ошибка колеса:", err); }
+    } catch (err) {
+        console.warn("Бэкенд недоступен, рисую пустое колесо.");
+        renderPerfectWheel('balanceChart', defaultData);
+    }
 }
 
 // 2. Обработка клика: расчет сектора и оценки
