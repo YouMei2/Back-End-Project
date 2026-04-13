@@ -24,7 +24,15 @@
 <div class="container">
     <h2>My Tasks</h2>
 
-    <div class="daily-progress"><div class="progress-fill" id="progressBar"></div></div>
+    <div class="progress-section">
+        <div class="progress-labels">
+            <span class="progress-title">PROGRESS BAR</span>
+            <span id="progressPercent">0%</span>
+        </div>
+        <div class="daily-progress">
+            <div class="progress-fill" id="progressBar"></div>
+        </div>
+    </div>
 
     <form class="input-group" id="taskForm">
         <input type="text" id="nameInput" placeholder="Категория (Здоровье, Финансы...)" required>

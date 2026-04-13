@@ -74,14 +74,22 @@ async function loadTasks() {
     } catch (err) { console.error("Ошибка задач:", err); }
 }
 
-// Добавим функцию для прогресс-бара, раз он у тебя есть в HTML
 function updateProgressBar(tasks) {
     const progressBar = document.getElementById('progressBar');
-    if (!progressBar || tasks.length === 0) return;
+    const percentText = document.getElementById('progressPercent'); // Находим текст
+    if (!progressBar) return;
+
+    if (!tasks || tasks.length === 0) {
+        progressBar.style.width = '0%';
+        if (percentText) percentText.textContent = '0%';
+        return;
+    }
 
     const completed = tasks.filter(t => t.done || t.isDone).length;
     const percent = Math.round((completed / tasks.length) * 100);
+
     progressBar.style.width = percent + '%';
+    if (percentText) percentText.textContent = percent + '%'; // Обновляем текст
 }
 
 async function addTask() {
@@ -125,9 +133,6 @@ async function deleteTask(id) {
     }
 }
 
-// --- ЛОГИКА КОЛЕСА (НАСЛОЕНИЕ) ---
-
-// 1. Загрузка данных из БД и вызов ТВОЕЙ функции отрисовки
 async function loadWheelData() {
     const userId = localStorage.getItem('userId');
     if (!userId) return;
@@ -136,7 +141,6 @@ async function loadWheelData() {
         const response = await fetch(`${WHEEL_API}/${userId}`);
         const data = await response.json();
 
-        // Мапим поля Java-класса на твой массив wheelData
         const wheelData = [
             { label: 'Здоровье и спорт', key: 'health', score: data.health || 0 },
             { label: 'Друзья и окружение', key: 'friends', score: data.friends || 0 },
@@ -281,7 +285,6 @@ function renderPerfectWheel(canvasId, data) {
     }
 }
 
-// --- ЕДИНЫЙ СТАРТ ---
 document.addEventListener('DOMContentLoaded', () => {
     checkAuth();
     loadTasks();
