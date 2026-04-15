@@ -7,6 +7,11 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+<div class="quote-container">
+    <div id="typewriter-quote" class="quote-text"></div>
+</div>
+
 <div class="header">
     <div class="logo">My Life Wheel</div>
     <div class="nav-btns" id="auth-section">
@@ -21,41 +26,100 @@
     </div>
 </div>
 
-<div class="container">
-    <h2>My Tasks</h2>
-
-    <div class="progress-section">
-        <div class="progress-labels">
-            <span class="progress-title">PROGRESS BAR</span>
-            <span id="progressPercent">0%</span>
+<div class="main-content-layout">
+    <div class="container tasks-column">
+        <h2>My Tasks</h2>
+        <div class="progress-section">
+            <div class="progress-labels">
+                <span class="progress-title">PROGRESS BAR</span>
+                <span id="progressPercent">0%</span>
+            </div>
+            <div class="daily-progress">
+                <div class="progress-fill" id="progressBar"></div>
+            </div>
         </div>
-        <div class="daily-progress">
-            <div class="progress-fill" id="progressBar"></div>
+
+        <form class="input-group" id="taskForm">
+            <input type="text" id="nameInput" placeholder="Категория (Здоровье, Финансы...)" required>
+            <input type="text" id="taskInput" placeholder="Что нужно сделать?" required>
+            <select id="priorityInput">
+                <option value="low">🌱 Простая задача</option>
+                <option value="medium">⚡ Средняя задача</option>
+                <option value="high">🔥 Важная задача</option>
+                <option value="goal">🏆 Личная цель</option>
+            </select>
+            <button type="submit" class="btn-add">Add Task</button>
+        </form>
+        <ul id="taskList"></ul>
+    </div>
+
+    <div class="container habits-column">
+        <h2>Habit Tracker</h2>
+        <div class="input-group">
+            <input type="text" id="habitInput" placeholder="Новая привычка (напр. Вода 2л)">
+            <button onclick="addHabit()" class="btn-add">Add Habit</button>
+        </div>
+        <ul id="habitList" class="habit-list">
+        </ul>
+    </div>
+</div>
+
+<div class="diary-wheel-layout">
+    <div class="container diary-section">
+        <h2>Дневник рефлексии</h2>
+        <form id="diaryForm" class="input-group">
+            <input type="text" id="diaryTitle" placeholder="Заголовок дня (напр. День прорыва)" required>
+            <div class="mood-selector">
+                <label>Настроение:</label>
+                <select id="diaryMood">
+                    <option value="😊">😊 Отлично</option>
+                    <option value="😐">😐 Нормально</option>
+                    <option value="😔">😔 Тяжелый день</option>
+                    <option value="🚀">🚀 Продуктивно</option>
+                </select>
+            </div>
+            <textarea id="diaryText" placeholder="Что ты чувствуешь сегодня? Что бы ты хотел изменить?" rows="5" required></textarea>
+            <button type="submit" class="btn-add">Записать в историю</button>
+        </form>
+        <div id="diaryLog" class="diary-log">
         </div>
     </div>
 
-    <form class="input-group" id="taskForm">
-        <input type="text" id="nameInput" placeholder="Категория (Здоровье, Финансы...)" required>
-        <input type="text" id="taskInput" placeholder="Что нужно сделать?" required>
-        <select id="priorityInput" style="padding: 12px; border-radius: 6px; border: 1px solid #ddd;">
-            <option value="low">🌱 Простая задача</option>
-            <option value="medium">⚡ Средняя задача</option>
-            <option value="high">🔥 Важная задача</option>
-            <option value="goal">🏆 Личная цель</option>
-        </select>
-        <button type="submit" class="btn-add">Add Task</button>
-    </form>
-    <ul id="taskList"></ul>
-</div>
-
-<div class="container wheel-card-container">
-    <div class="wheel-card">
-        <h2 class="wheel-title">Колесо Жизни</h2>
-        <div class="canvas-wrapper">
-            <canvas id="balanceChart" width="550" height="550"></canvas>
+    <div class="container wheel-section-new">
+        <div class="wheel-card">
+            <h2 class="wheel-title">Колесо Жизни</h2>
+            <div class="canvas-wrapper">
+                <canvas id="balanceChart" width="550" height="550"></canvas>
+            </div>
         </div>
     </div>
 </div>
+
+<footer class="site-footer">
+    <div class="footer-content">
+        <div class="footer-section about">
+            <h3>О проекте</h3>
+            <p>Этот сервис был создан как личный инструмент для управления жизнью и повышения эффективности. Я верю, что баланс во всех сферах — это ключ к настоящему успеху.</p>
+        </div>
+
+        <div class="footer-section inspiration">
+            <h3>Вдохновение</h3>
+            <p>Идея проекта родилась после прочтения книги <a href="https://www.litres.ru/book/aleksey-ivanovich-tolkachev/ekstremalnyy-taym-menedzhment-68808090/" target="_blank">«Экстремальный тайм-менеджмент»</a>. Колесо баланса — это фундамент, на котором строится моя система планирования.</p>
+        </div>
+
+        <div class="footer-section details">
+            <h3>Информация</h3>
+            <p><strong>Создано:</strong> Апрель 2026</p>
+            <p><strong>Версия:</strong> 1.0 (Beta)</p>
+            <div class="social-links">
+                <span>GitHub</span> • <span>Telegram</span> • <span>LinkedIn</span>
+            </div>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        &copy; 2026 My Life Wheel. Разработано с фокусом на результат.
+    </div>
+</footer>
 
 <script src="script.js"></script>
 </body>

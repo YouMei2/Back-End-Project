@@ -1,5 +1,12 @@
 const API_URL = 'http://localhost:8080/tasks';
 const WHEEL_API = 'http://localhost:8080/wheel';
+const HABITS_API = 'http://localhost:8080/habits';
+const DIARY_API = 'http://localhost:8080/diary';
+
+// Переменные для пульсации (Твоя "Вишенка")
+let pulseOpacity = 0.2;
+let pulseDirection = 1;
+let currentWheelData = null;
 
 // --- СИСТЕМНЫЕ ФУНКЦИИ ---
 function checkAuth() {
@@ -30,7 +37,14 @@ function logout() {
 async function loadTasks() {
     const userId = localStorage.getItem('userId');
     const list = document.getElementById('taskList');
-    if (!list || !userId) return;
+    if (!list) return;
+
+    // Если гость — очищаем список и выходим
+    if (!userId || userId === "null") {
+        list.innerHTML = '';
+        updateProgressBar([]);
+        return;
+    }
 
     try {
         const response = await fetch(`${API_URL}?userId=${userId}`);
@@ -43,19 +57,14 @@ async function loadTasks() {
             const isDone = task.done || task.isDone;
             if (isDone) li.classList.add('completed-task');
 
-            // Создаем объект с текстом для бейджиков, чтобы красиво отображать ключи
             const priorityLabels = {
-                'low': '🌱 Простая',
-                'medium': '⚡ Средняя',
-                'high': '🔥 Важная',
-                'goal': '🏆 Цель'
+                'low': '🌱 Простая', 'medium': '⚡ Средняя',
+                'high': '🔥 Важная', 'goal': '🏆 Цель'
             };
 
-            // Добавляем HTML бейджика перед текстом задачи
             li.innerHTML = `
                 <div class="task-content">
-                    <input type="checkbox" ${isDone ? 'checked' : ''} 
-                           onchange="toggleTask(${task.id}, ${isDone})">
+                    <input type="checkbox" ${isDone ? 'checked' : ''} onchange="toggleTask(${task.id}, ${isDone})">
                     <div class="task-text ${isDone ? 'completed-text' : ''}">
                         <span class="priority-badge prio-${task.priority || 'low'}">
                             ${priorityLabels[task.priority] || '🌱 Простая'}
@@ -68,38 +77,33 @@ async function loadTasks() {
             `;
             list.appendChild(li);
         });
-
-        // Обновляем прогресс-бар после загрузки
         updateProgressBar(tasks);
     } catch (err) { console.error("Ошибка задач:", err); }
 }
 
 function updateProgressBar(tasks) {
     const progressBar = document.getElementById('progressBar');
-    const percentText = document.getElementById('progressPercent'); // Находим текст
+    const percentText = document.getElementById('progressPercent');
     if (!progressBar) return;
-
-    if (!tasks || tasks.length === 0) {
-        progressBar.style.width = '0%';
-        if (percentText) percentText.textContent = '0%';
-        return;
-    }
-
     const completed = tasks.filter(t => t.done || t.isDone).length;
-    const percent = Math.round((completed / tasks.length) * 100);
-
+    const percent = tasks.length > 0 ? Math.round((completed / tasks.length) * 100) : 0;
     progressBar.style.width = percent + '%';
-    if (percentText) percentText.textContent = percent + '%'; // Обновляем текст
+    if (percentText) percentText.textContent = percent + '%';
 }
 
 async function addTask() {
+    const userId = localStorage.getItem('userId');
+    // ПРОВЕРКА: Если гость пытается добавить задачу
+    if (!userId || userId === "null") {
+        return alert("Пожалуйста, войдите в систему, чтобы добавлять задачи!");
+    }
+
     const descInput = document.getElementById('taskInput');
     const nameInput = document.getElementById('nameInput');
     const priorityInput = document.getElementById('priorityInput');
-    const userId = localStorage.getItem('userId');
 
     try {
-        await fetch(API_URL, {
+        const response = await fetch(API_URL, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({
@@ -110,8 +114,10 @@ async function addTask() {
                 userId: parseInt(userId)
             })
         });
-        descInput.value = ''; nameInput.value = '';
-        await loadTasks();
+        if (response.ok) {
+            descInput.value = ''; nameInput.value = '';
+            await loadTasks();
+        }
     } catch (err) { console.error(err); }
 }
 
@@ -133,11 +139,10 @@ async function deleteTask(id) {
     }
 }
 
+// --- КОЛЕСО ЖИЗНИ (БЕЗ ИЗМЕНЕНИЙ ПО ТВОЕЙ ПРОСЬБЕ) ---
 async function loadWheelData() {
     const userId = localStorage.getItem('userId');
-    if (!userId) return;
 
-    // Начальные пустые данные на случай ошибки
     const defaultData = [
         { label: 'Здоровье и спорт', key: 'health', score: 0 },
         { label: 'Друзья и окружение', key: 'friends', score: 0 },
@@ -149,26 +154,27 @@ async function loadWheelData() {
         { label: 'Яркость жизни', key: 'rest', score: 0 }
     ];
 
+    // Если пользователя нет, сразу рисуем пустое колесо и выходим
+    if (!userId || userId === "null") {
+        currentWheelData = defaultData;
+        renderPerfectWheel('balanceChart', defaultData);
+        return;
+    }
+
     try {
         const response = await fetch(`${WHEEL_API}/${userId}`);
         if (!response.ok) throw new Error("Backend offline");
-
         const data = await response.json();
-
-        // Формируем данные из ответа сервера
-        const wheelData = defaultData.map(item => ({
-            ...item,
-            score: data[item.key] || 0
-        }));
-
+        const wheelData = defaultData.map(item => ({ ...item, score: data[item.key] || 0 }));
+        currentWheelData = wheelData;
         renderPerfectWheel('balanceChart', wheelData);
     } catch (err) {
-        console.warn("Бэкенд недоступен, рисую пустое колесо.");
+        console.warn("Бэкенд недоступен или ошибка, рисую дефолт.");
+        currentWheelData = defaultData;
         renderPerfectWheel('balanceChart', defaultData);
     }
 }
 
-// 2. Обработка клика: расчет сектора и оценки
 function setupWheelClick() {
     const canvas = document.getElementById('balanceChart');
     if (!canvas) return;
@@ -181,23 +187,20 @@ function setupWheelClick() {
         const x = event.clientX - rect.left - canvas.width / 2;
         const y = event.clientY - rect.top - canvas.height / 2;
 
-        // Угол клика
         let angle = Math.atan2(y, x) + Math.PI / 2;
         if (angle < 0) angle += Math.PI * 2;
 
         const sectorIndex = Math.floor(angle / (Math.PI / 4)) % 8;
         const distance = Math.sqrt(x*x + y*y);
-        const maxRadius = 200; // Половина squareSize
+        const maxRadius = 200;
 
         let score = Math.ceil((distance / maxRadius) * 10);
         if (score > 10) score = 10;
         if (score < 1) score = 1;
 
-        // Список ключей (в том же порядке, что в loadWheelData)
         const keys = ['health', 'friends', 'family', 'work', 'finance', 'spiritual', 'learning', 'rest'];
         const clickedKey = keys[sectorIndex];
 
-        // Сохранение
         try {
             const res = await fetch(`${WHEEL_API}/${userId}`);
             let currentData = await res.json();
@@ -214,100 +217,286 @@ function setupWheelClick() {
     });
 }
 
-// --- ТВОЯ ФУНКЦИЯ (БЕЗ ИЗМЕНЕНИЙ) ---
 function renderPerfectWheel(canvasId, data) {
     const canvas = document.getElementById(canvasId);
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
+    currentWheelData = data;
 
-    const width = canvas.width;
-    const height = canvas.height;
-    const centerX = width / 2;
-    const centerY = height / 2;
+    function draw() {
+        if (!currentWheelData) return;
+        const width = canvas.width;
+        const height = canvas.height;
+        const centerX = width / 2;
+        const centerY = height / 2;
+        const squareSize = 400;
+        const maxRadius = squareSize / 2;
+        const labelRadius = maxRadius + 50;
 
-    const squareSize = 400;
-    const maxRadius = squareSize / 2;
-    const labelRadius = maxRadius + 50;
+        ctx.clearRect(0, 0, width, height);
+        const scores = currentWheelData.map(d => d.score).filter(s => s > 0);
+        const minScore = scores.length > 0 ? Math.min(...scores) : null;
 
-    const gridColor = 'rgba(0, 0, 0, 0.08)';
-    const fillColor = 'rgba(46, 125, 50, 0.7)';
-    const textColor = '#1a1a1a';
+        for (let i = 1; i <= 10; i++) {
+            const radius = (maxRadius / 10) * i;
+            ctx.strokeStyle = '#000000'; ctx.lineWidth = 1.5;
+            ctx.beginPath(); ctx.arc(centerX, centerY, radius, 0, Math.PI * 2); ctx.stroke();
+        }
 
-    ctx.clearRect(0, 0, width, height);
+        for (let i = 0; i < 8; i++) {
+            const angle = (Math.PI / 4) * i - Math.PI / 2;
+            ctx.beginPath(); ctx.moveTo(centerX, centerY);
+            ctx.lineTo(centerX + Math.cos(angle) * (maxRadius * 1.41), centerY + Math.sin(angle) * (maxRadius * 1.41));
+            ctx.stroke();
+        }
 
-    ctx.strokeStyle = '#000000';
-    ctx.lineWidth = 1.5;
+        for (let i = 0; i < 8; i++) {
+            const item = currentWheelData[i];
+            const startAngle = (Math.PI / 4) * i - Math.PI / 2;
+            const endAngle = startAngle + (Math.PI / 4);
+            const r = (maxRadius / 10) * item.score;
 
-    for (let i = 1; i <= 10; i++) {
-        const radius = (maxRadius / 10) * i;
-        ctx.beginPath();
-        ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
-        ctx.stroke();
+            if (item.score === minScore && minScore < 7 && item.score > 0) {
+                ctx.save(); ctx.fillStyle = `rgba(220, 53, 69, ${pulseOpacity})`;
+                ctx.beginPath(); ctx.moveTo(centerX, centerY);
+                ctx.arc(centerX, centerY, r + 8, startAngle, endAngle); ctx.fill(); ctx.restore();
+            }
+            ctx.fillStyle = 'rgba(46, 125, 50, 0.7)';
+            ctx.beginPath(); ctx.moveTo(centerX, centerY);
+            ctx.arc(centerX, centerY, r, startAngle, endAngle); ctx.closePath(); ctx.fill();
+            ctx.strokeStyle = '#000000'; ctx.lineWidth = 3; ctx.stroke();
+        }
+
+        ctx.fillStyle = '#1a1a1a'; ctx.font = 'bold 13px "Inter", sans-serif';
+        ctx.textBaseline = 'middle'; ctx.textAlign = 'center';
+        for (let i = 0; i < 8; i++) {
+            const item = currentWheelData[i];
+            const axisAngle = (Math.PI / 4) * i - Math.PI / 2;
+            const textAngle = axisAngle + (Math.PI / 8);
+            ctx.save();
+            ctx.translate(centerX + Math.cos(textAngle) * labelRadius, centerY + Math.sin(textAngle) * labelRadius);
+            let rotationAngle = textAngle + Math.PI / 2;
+            if (textAngle > 0 && textAngle < Math.PI) rotationAngle += Math.PI;
+            ctx.rotate(rotationAngle);
+            ctx.fillText(item.label.toUpperCase(), 0, 0); ctx.restore();
+        }
+
+        pulseOpacity += 0.008 * pulseDirection;
+        if (pulseOpacity > 0.5 || pulseOpacity < 0.15) pulseDirection *= -1;
+        requestAnimationFrame(draw);
+    }
+    if (!window.isWheelAnimating) { window.isWheelAnimating = true; draw(); }
+}
+
+// --- ПРИВЫЧКИ ---
+async function loadHabits() {
+    const userId = localStorage.getItem('userId');
+    const habitList = document.getElementById('habitList');
+    if (!habitList) return;
+
+    // Если гость — очищаем список и выходим
+    if (!userId || userId === "null") {
+        habitList.innerHTML = '';
+        return;
     }
 
-    ctx.strokeStyle = '#000000';
-    ctx.lineWidth = 2;
-    for (let i = 0; i < 8; i++) {
-        const angle = (Math.PI / 4) * i - Math.PI / 2;
-        const xEnd = centerX + Math.cos(angle) * (squareSize / 2 * 1.41);
-        const yEnd = centerY + Math.sin(angle) * (squareSize / 2 * 1.41);
-        ctx.beginPath();
-        ctx.moveTo(centerX, centerY);
-        ctx.lineTo(xEnd, yEnd);
-        ctx.stroke();
+    try {
+        const response = await fetch(`${HABITS_API}?userId=${userId}`);
+        const habits = await response.json();
+        habitList.innerHTML = '';
+        habits.forEach(habit => renderHabitItem(habit));
+    } catch (err) { console.error("Ошибка загрузки привычек:", err); }
+}
+
+async function addHabit() {
+    const input = document.getElementById('habitInput');
+    const userId = localStorage.getItem('userId');
+
+    // ПРОВЕРКА: Если гость пытается добавить привычку
+    if (!userId || userId === "null") {
+        return alert("Пожалуйста, войдите в систему, чтобы отслеживать привычки!");
     }
 
-    for (let i = 0; i < 8; i++) {
-        const item = data[i];
-        const startAngle = (Math.PI / 4) * i - Math.PI / 2;
-        const endAngle = startAngle + (Math.PI / 4);
-        const currentRadius = (maxRadius / 10) * item.score;
+    if (!input.value.trim()) return;
 
-        ctx.fillStyle = fillColor;
-        ctx.beginPath();
-        ctx.moveTo(centerX, centerY);
-        ctx.arc(centerX, centerY, currentRadius, startAngle, endAngle);
-        ctx.closePath();
-        ctx.fill();
+    try {
+        const response = await fetch(HABITS_API, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                name: input.value.trim(),
+                userId: parseInt(userId),
+                streak: 0,
+                current_days: ""
+            })
+        });
+        if (response.ok) { input.value = ''; await loadHabits(); }
+    } catch (err) { console.error("Ошибка добавления:", err); }
+}
 
-        ctx.strokeStyle = '#000000';
-        ctx.lineWidth = 3;
-        ctx.stroke();
-    }
+function renderHabitItem(habit) {
+    const habitList = document.getElementById('habitList');
+    if (!habitList) return;
+    const li = document.createElement('li');
+    li.className = 'habit-item';
+    li.id = `habit-${habit.id}`;
+    li.setAttribute('data-streak', habit.streak || 0);
 
-    ctx.fillStyle = textColor;
-    ctx.font = 'bold 13px "Inter", sans-serif';
-    ctx.textBaseline = 'middle';
-    ctx.textAlign = 'center';
+    const daysHtml = ['ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ', 'ВС'].map(day => `
+        <div class="day-wrapper">
+            <span class="day-label">${day}</span>
+            <input type="checkbox" class="day-check" onchange="checkWeekCompletion(${habit.id})">
+        </div>`).join('');
 
-    for (let i = 0; i < 8; i++) {
-        const item = data[i];
-        const axisAngle = (Math.PI / 4) * i - Math.PI / 2;
-        const textAngle = axisAngle + (Math.PI / 8);
-        const xText = centerX + Math.cos(textAngle) * labelRadius;
-        const yText = centerY + Math.sin(textAngle) * labelRadius;
+    li.innerHTML = `
+        <div class="habit-info">
+            <span class="habit-name">${habit.name}</span>
+            <span class="habit-streak ${habit.streak > 0 ? 'streak-active' : ''}" id="streak-${habit.id}">${formatStreak(habit.streak)}</span>
+        </div>
+        <div class="habit-days">${daysHtml}</div>
+        <button class="btn-delete" onclick="deleteHabit(${habit.id})">×</button>
+    `;
+    habitList.appendChild(li);
+}
 
-        ctx.save();
-        ctx.translate(xText, yText);
-        let rotationAngle = textAngle + Math.PI / 2;
-        if (textAngle > 0 && textAngle < Math.PI) rotationAngle += Math.PI;
-        ctx.rotate(rotationAngle);
-        ctx.fillText(item.label.toUpperCase(), 0, 0);
-        ctx.restore();
+async function checkWeekCompletion(habitId) {
+    const habitItem = document.getElementById(`habit-${habitId}`);
+    const checkboxes = habitItem.querySelectorAll('.day-check');
+    if (Array.from(checkboxes).every(cb => cb.checked)) {
+        let newStreak = (parseInt(habitItem.getAttribute('data-streak')) || 0) + 1;
+        try {
+            const response = await fetch(`${HABITS_API}/${habitId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ streak: newStreak, current_days: "" })
+            });
+            if (response.ok) {
+                habitItem.setAttribute('data-streak', newStreak);
+                const sEl = document.getElementById(`streak-${habitId}`);
+                sEl.textContent = formatStreak(newStreak);
+                sEl.classList.add('streak-active');
+                checkboxes.forEach(cb => cb.checked = false);
+            }
+        } catch (err) { console.error(err); }
     }
 }
 
+function formatStreak(weeks) {
+    const w = parseInt(weeks) || 0;
+    if (w <= 0) return "0 недель";
+    return w < 4 ? `${w} нед.` : `${Math.floor(w / 4)} мес.`;
+}
+
+async function deleteHabit(id) {
+    try {
+        await fetch(`${HABITS_API}/${id}`, { method: 'DELETE' });
+        document.getElementById(`habit-${id}`).remove();
+    } catch (err) { console.error(err); }
+}
+
+// --- ДНЕВНИК ---
+async function loadDiary() {
+    const userId = localStorage.getItem('userId');
+    const log = document.getElementById('diaryLog');
+    if (!log || !userId) return;
+    try {
+        const response = await fetch(`${DIARY_API}?userId=${userId}`);
+        const entries = await response.json();
+        log.innerHTML = entries.map(item => {
+            const dateStr = item.created_at ? new Date(item.created_at).toLocaleDateString('ru-RU') : 'Сегодня';
+            return `
+                <div class="diary-entry">
+                    <div class="diary-entry-header"><span>${dateStr}</span><span>${item.mood}</span></div>
+                    <h4>${item.title}</h4><p>${item.content}</p>
+                    <button class="btn-delete" onclick="deleteDiaryEntry(${item.id})">×</button>
+                </div>`;
+        }).join('');
+    } catch (err) { console.error("Ошибка дневника:", err); }
+}
+
+async function addDiaryEntry(event) {
+    event.preventDefault();
+    const userId = localStorage.getItem('userId');
+    if (!userId) return alert("Войдите в систему");
+    const entry = {
+        userId: parseInt(userId),
+        title: document.getElementById('diaryTitle').value,
+        mood: document.getElementById('diaryMood').value,
+        content: document.getElementById('diaryText').value
+    };
+    try {
+        const response = await fetch(DIARY_API, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(entry)
+        });
+        if (response.ok) { event.target.reset(); await loadDiary(); }
+    } catch (err) { console.error("Ошибка сохранения:", err); }
+}
+
+async function deleteDiaryEntry(id) {
+    if (confirm('Удалить запись?')) {
+        await fetch(`${DIARY_API}/${id}`, { method: 'DELETE' });
+        await loadDiary();
+    }
+}
+
+// --- ИНИЦИАЛИЗАЦИЯ (ЕДИНЫЙ БЛОК) ---
+// --- ЦИТАТЫ (Теперь через ИИ) ---
+async function initTypewriter() {
+    const textElement = document.getElementById('typewriter-quote');
+    if (!textElement) return;
+
+    let quote = "";
+
+    try {
+        // Запрос к твоему будущему эндпоинту
+        const response = await fetch('http://localhost:8080/ai-quote');
+        if (response.ok) {
+            quote = await response.text();
+        } else {
+            throw new Error();
+        }
+    } catch (err) {
+        // Фолбэк (запасной вариант), если сервер лег или ИИ не ответил
+        const fallbackQuotes = [
+            "Дисциплина — ключ к успеху.",
+            "Твой единственный предел — это ты сам.",
+            "Маленькие шаги ведут к цели."
+        ];
+        quote = fallbackQuotes[Math.floor(Math.random() * fallbackQuotes.length)];
+    }
+
+    // Очищаем текст перед началом анимации
+    textElement.textContent = "";
+
+    let i = 0;
+    function type() {
+        if (i < quote.length) {
+            textElement.textContent += quote.charAt(i++);
+            setTimeout(type, 50);
+        }
+    }
+    type();
+}
+
+const quotes = ["Дисциплина — ключ к успеху.", "Твой единственный предел — это ты сам.", "Маленькие шаги ведут к цели."];
+
 document.addEventListener('DOMContentLoaded', () => {
     checkAuth();
+
+    // Запускаем всё. Функции сами поймут, гость перед ними или юзер.
     loadTasks();
-    loadWheelData(); // Тянет из базы и рисует
-    setupWheelClick(); // Включает клики
+    loadWheelData();
+    loadHabits();
+    loadDiary();
+
+    setupWheelClick();
+    initTypewriter();
+
+    const diaryForm = document.getElementById('diaryForm');
+    if (diaryForm) diaryForm.addEventListener('submit', addDiaryEntry);
 
     const taskForm = document.getElementById('taskForm');
-    if (taskForm) {
-        taskForm.addEventListener('submit', function(event) {
-            event.preventDefault();
-            addTask();
-        });
-    }
+    if (taskForm) taskForm.addEventListener('submit', (e) => { e.preventDefault(); addTask(); });
 });

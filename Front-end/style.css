@@ -1,11 +1,42 @@
 /* --- БАЗОВЫЕ НАСТРОЙКИ --- */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    max-width: 800px;
-    margin: 0 auto;
+    max-width: 100%;
+    margin: 0;
     background: #eef2f3;
-    padding-top: 100px;
+    padding-top: 100px; /* Отступ под хедер */
     overflow-x: hidden;
+}
+
+/* --- ЦИТАТА ДНЯ (ЧИНИМ ПОЯВЛЕНИЕ) --- */
+.quote-container {
+    max-width: 1400px;
+    margin: 0 auto 30px; /* Отступ снизу до основного контента */
+    padding: 0 40px;
+    text-align: center;
+    min-height: 40px; /* Чтобы страница не прыгала */
+}
+
+.quote-text {
+    font-size: 22px;
+    font-weight: 700;
+    color: #333;
+    font-style: italic;
+    letter-spacing: 0.5px;
+    line-height: 1.4;
+}
+
+/* Каретка печатной машинки */
+.quote-text::after {
+    content: '|';
+    margin-left: 5px;
+    color: #28a745;
+    animation: blink 0.7s infinite;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
 }
 
 /* --- ФИКСИРОВАННЫЙ ХЕДЕР --- */
@@ -26,7 +57,7 @@ body {
 }
 
 .logo {
-    color: #28a745 !important; /* Тот самый зеленый */
+    color: #28a745 !important;
     font-weight: 800 !important;
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -48,189 +79,31 @@ body {
     white-space: nowrap;
 }
 
-/* REGISTER button */
-.nav-btns button:first-child {
-    background-color: #28a745 !important;
-    color: white !important;
-    border: 2px solid #28a745 !important;
-}
+/* Кнопки REGISTER / LOGIN */
+.nav-btns button:first-child { background-color: #28a745 !important; color: white !important; border: 2px solid #28a745 !important; }
+.nav-btns button:first-child:hover { background-color: #218838 !important; box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3) !important; }
+.nav-btns button:last-child { background-color: white !important; color: #555 !important; border: 2px solid #ddd !important; }
+.nav-btns button:last-child:hover { background-color: #f8f9fa !important; border-color: #bbb !important; color: #333 !important; }
 
-.nav-btns button:first-child:hover {
-    background-color: #218838 !important;
-    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3) !important;
-}
-
-/* LOGIN button */
-.nav-btns button:last-child {
-    background-color: white !important;
-    color: #555 !important;
-    border: 2px solid #ddd !important;
-}
-
-.nav-btns button:last-child:hover {
-    background-color: #f8f9fa !important;
-    border-color: #bbb !important;
-    color: #333 !important;
-}
-
-/* --- КОНТЕЙНЕРЫ --- */
-.container {
-    background: white;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    margin-top: 120px !important;
-    position: relative;
-    z-index: 1;
-}
-
-h2 { color: #333; text-align: center; font-weight: 800; }
-
-/* --- ФОРМЫ (Login/Register и задачи) --- */
-.input-group { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
-
-input, select {
-    padding: 12px;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    font-size: 16px;
-}
-
-/* Кнопка Sign In / Add Task — Возвращаем яркий зеленый */
-.btn-add, .auth-container button, button[type="submit"] {
-    padding: 12px;
-    cursor: pointer;
-    background: #28a745 !important; /* Насыщенный зеленый */
-    color: white !important;
-    border: none !important;
-    border-radius: 6px !important;
-    font-weight: bold !important;
-    font-size: 16px;
-    transition: 0.3s;
-}
-
-.btn-add:hover, .auth-container button:hover {
-    background: #218838 !important;
-    box-shadow: 0 4px 10px rgba(40, 167, 69, 0.2);
-}
-
-/* --- СПИСОК ЗАДАЧ --- */
-ul { list-style: none; padding: 0; }
-
-li {
-    background: #fff;
-    margin: 10px 0;
-    padding: 15px;
-    border-radius: 8px;
-    border-left: 6px solid #28a745;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    transition: 0.2s;
-}
-
-li:hover {
-    transform: translateX(10px);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-}
-
-.completed-task { border-left-color: #6c757d; opacity: 0.6; }
-.completed-text { text-decoration: line-through; color: #6c757d; }
-
-.task-content { display: flex; align-items: center; gap: 15px; }
-.task-text b { color: #28a745; text-transform: uppercase; font-size: 0.9em; }
-.completed-text b { color: #6c757d; }
-
-.btn-delete {
-    background: #dc3545;
-    color: white;
-    border: none;
-    padding: 5px 12px;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-.btn-delete:hover { background: #c82333; }
-
-/* --- ПРОГРЕСС-БАР --- */
-.progress-container {
-    width: 100%;
-    background: #eee;
-    height: 10px;
-    border-radius: 10px;
-    margin-bottom: 20px;
-    overflow: hidden;
-}
-
-#progressBar {
-    height: 100%;
-    background: #28a745;
-    width: 0%;
-    transition: width 0.5s ease;
-}
-
-/* --- ПРИОРИТЕТЫ --- */
-.priority-badge {
-    padding: 4px 10px;
-    border-radius: 20px;
-    font-size: 11px;
-    font-weight: bold;
-    text-transform: uppercase;
-    margin-bottom: 5px;
-    display: inline-block;
-}
-
-/* Когда задача выполнена — весь блок тускнеет */
-.completed-task {
-    border-left-color: #6c757d !important;
-    opacity: 0.6;
-}
-
-/* Текст внутри перечеркивается */
-.completed-text {
-    text-decoration: line-through !important;
-    color: #6c757d !important;
-}
-
-.prio-low { background: #e8f5e9; color: #2e7d32; }
-.prio-medium { background: #fff3e0; color: #ef6c00; }
-.prio-high { background: #ffebee; color: #c62828; }
-.prio-goal { background: #e3f2fd; color: #1565c0; }
-
-/* --- КОЛЕСО БАЛАНСА --- */
-.wheel-card {
-    background: #ffffff;
-    padding: 50px;
-    border-radius: 24px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    border: 1px solid rgba(0, 0, 0, 0.03);
-    margin: 50px auto;
-}
-
-.wheel-title {
-    font-size: 28px;
-    font-weight: 800;
-    color: #1a1a1a;
-    margin-bottom: 40px;
-    letter-spacing: -0.5px;
-    border-bottom: 3px solid #28a745;
-    padding-bottom: 10px;
-}
-
-.canvas-wrapper {
-    width: 550px;
-    height: 550px;
-    position: relative;
-}
-
-/* --- AUTH SPECIFIC --- */
 .auth-container {
-    margin-top: 150px !important;
+    max-width: 450px !important; /* Ограничиваем ширину, чтобы не было "растянуто" */
+    margin: 150px auto 50px !important; /* Центрируем по горизонтали */
     text-align: center;
+    padding: 40px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+}
+
+.auth-container input {
+    width: 100%; /* Внутри узкого контейнера инпуты на всю ширину */
+    box-sizing: border-box;
+    margin-bottom: 15px;
+}
+
+.auth-container button {
+    width: 100%;
+    padding: 12px;
 }
 
 .auth-footer {
@@ -245,99 +118,199 @@ li:hover {
     font-weight: bold;
 }
 
-.auth-footer a:hover { text-decoration: underline; }
-
-html { overflow-x: hidden; }
-
-/* Дополнительные стили для прогресс-бара */
-.daily-progress {
-    width: 100%;
-    height: 12px;
-    background-color: #eee;
-    border-radius: 10px;
-    margin: 20px 0;
-    overflow: hidden;
-    box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
-}
-
-.progress-fill {
-    height: 100%;
-    width: 0%; /* управляется через JS */
-    background: linear-gradient(90deg, #28a745, #34ce57);
-    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* Новые стили для заметности */
-.progress-section {
-    margin: 20px 0 30px 0;
-}
-
-.progress-labels {
+/* --- МАКЕТЫ (ЗАДАЧИ И ДНЕВНИК+КОЛЕСО) --- */
+.main-content-layout, .diary-wheel-layout {
     display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    margin-bottom: 8px;
+    gap: 30px;
+    max-width: 1400px;
+    margin: 0 auto 30px; /* Отступ между блоками */
+    padding: 0 40px;
+    box-sizing: border-box;
+    align-items: flex-start;
 }
 
-.progress-title {
-    font-size: 12px;
-    font-weight: 900;
-    color: #555;
-    letter-spacing: 1.5px;
-}
+/* Пропорции колонок (Задачи/Привычки) */
+.tasks-column { flex: 1.3; margin-top: 0 !important; }
+.habits-column { flex: 1; margin-top: 0 !important; }
 
-#progressPercent {
-    font-size: 16px;
-    font-weight: bold;
-    color: #28a745;
-}
+/* Пропорции колонок (Дневник/Колесо) */
+.diary-section { flex: 1; margin-top: 0 !important; }
+.wheel-section-new { flex: 1.3; margin-top: 0 !important; }
 
-.daily-progress {
-    width: 100%;
-    height: 24px; /* Сделали выше */
-    background-color: #e0e0e0;
+/* --- КОНТЕЙНЕРЫ (ОБЩИЕ СТИЛИ) --- */
+.container {
+    background: white;
+    padding: 30px;
     border-radius: 12px;
-    overflow: hidden;
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
-    border: 1px solid #ddd;
-}
-
-.progress-fill {
-    height: 100%;
-    width: 0%;
-    background: linear-gradient(90deg, #28a745, #4cd137); /* Более яркий градиент */
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
     position: relative;
-    transition: width 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    box-shadow: 0 0 10px rgba(40, 167, 69, 0.4); /* Мягкое свечение */
-}
-
-/* Добавим легкую полосатую анимацию, как на профессиональных дашбордах */
-.progress-fill::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; bottom: 0; right: 0;
-    background-image: linear-gradient(
-            -45deg,
-            rgba(255, 255, 255, .15) 25%,
-            transparent 25%,
-            transparent 50%,
-            rgba(255, 255, 255, .15) 50%,
-            rgba(255, 255, 255, .15) 75%,
-            transparent 75%,
-            transparent
-    );
-    background-size: 40px 40px;
     z-index: 1;
 }
 
-/* Эффект блика, чтобы бар выглядел "стеклянным" и живым */
-.progress-fill::after {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: linear-gradient(
-            rgba(255,255,255,0.3) 0%,
-            rgba(255,255,255,0) 50%,
-            rgba(0,0,0,0.05) 100%
-    );
+h2 { color: #333; text-align: center; font-weight: 800; margin-top: 0; margin-bottom: 25px; }
+
+/* --- ФОРМЫ И ВВОД --- */
+.input-group { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+
+input, select, textarea {
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 16px;
+    font-family: inherit;
+}
+
+textarea { resize: none; } /* Запрет изменения размера дневника */
+
+.btn-add, .auth-container button, button[type="submit"] {
+    padding: 12px;
+    cursor: pointer;
+    background: #28a745 !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 6px !important;
+    font-weight: bold !important;
+    font-size: 16px;
+    transition: 0.3s;
+}
+
+.btn-add:hover { background: #218838 !important; box-shadow: 0 4px 10px rgba(40, 167, 69, 0.2); }
+
+/* --- СПИСОК ЗАДАЧ --- */
+ul { list-style: none; padding: 0; }
+li {
+    background: #fff; margin: 10px 0; padding: 15px; border-radius: 8px;
+    border-left: 6px solid #28a745; display: flex; justify-content: space-between;
+    align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: 0.2s;
+}
+li:hover { transform: translateX(10px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+.task-content { display: flex; align-items: center; gap: 15px; }
+.btn-delete { background: #dc3545; color: white; border: none; padding: 5px 12px; border-radius: 4px; cursor: pointer; }
+
+/* --- ТРЕКЕР ПРИВЫЧЕК --- */
+.habit-item {
+    display: flex; justify-content: space-between; align-items: center;
+    background: #fff; padding: 20px; margin-bottom: 12px; border-radius: 12px;
+    border-left: 6px solid #28a745; box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+}
+.habit-name { font-weight: 700; color: #333; font-size: 1.1rem; flex: 1; }
+.habit-days { display: flex; gap: 12px; }
+.day-wrapper { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.day-label { font-size: 10px; font-weight: 800; color: #999; text-transform: uppercase; }
+
+/* Современные кубики */
+.day-check {
+    appearance: none; -webkit-appearance: none; width: 28px; height: 28px;
+    background-color: #f0f0f0; border: 2px solid #e0e0e0; border-radius: 8px;
+    cursor: pointer; position: relative; transition: all 0.2s ease;
+}
+.day-check:checked { background-color: #28a745; border-color: #28a745; }
+.day-check:checked::after {
+    content: '✓'; position: absolute; color: white; font-size: 16px;
+    font-weight: bold; top: 50%; left: 50%; transform: translate(-50%, -50%);
+}
+
+/* Стрик недель */
+.habit-info { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+.habit-streak { font-size: 12px; font-weight: 800; color: #999; background: #f0f0f0; padding: 2px 8px; border-radius: 20px; width: fit-content; }
+.streak-active { color: white; background: #28a745; }
+
+/* Активный стрик (Зеленый) */
+.habit-streak.streak-active {
+    background-color: #28a745 !important;
+    color: white !important;
+    box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+    transition: all 0.3s ease;
+}
+
+/* Анимация тряски (Shake) */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-5px); }
+    40%, 80% { transform: translateX(5px); }
+}
+
+/* --- ДНЕВНИК РЕФЛЕКСИИ (СТИЛИ ДЛЯ СПИСКА ЗАПИСЕЙ) --- */
+.mood-selector { display: flex; align-items: center; gap: 10px; font-weight: bold; color: #555; margin-bottom: 10px; }
+.diary-log { margin-top: 20px; max-height: 400px; overflow-y: auto; padding-right: 10px; }
+.diary-entry { background: #f9f9f9; padding: 15px; border-radius: 8px; border-left: 4px solid #28a745; margin-bottom: 15px; }
+.diary-entry-header { display: flex; justify-content: space-between; font-size: 12px; color: #888; margin-bottom: 5px; }
+.diary-entry h4 { margin: 5px 0; color: #333; font-weight: 700; }
+.diary-entry p { font-size: 14px; color: #666; margin: 0; line-height: 1.5; }
+
+/* --- ПРОГРЕСС-БАР ЗАДАЧ --- */
+.progress-section { margin-bottom: 30px; }
+.progress-labels { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8px; }
+.progress-title { font-size: 12px; font-weight: 900; color: #555; letter-spacing: 1.5px; }
+#progressPercent { font-size: 16px; font-weight: bold; color: #28a745; }
+.daily-progress { width: 100%; height: 24px; background-color: #e0e0e0; border-radius: 12px; overflow: hidden; border: 1px solid #ddd; }
+.progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #28a745, #4cd137); transition: width 0.6s ease; }
+
+/* --- ПРИОРИТЕТЫ ЗАДАЧ --- */
+.priority-badge { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
+.prio-low { background: #e8f5e9; color: #2e7d32; }
+.prio-medium { background: #fff3e0; color: #ef6c00; }
+.prio-high { background: #ffebee; color: #c62828; }
+.prio-goal { background: #e3f2fd; color: #1565c0; }
+.completed-task { border-left-color: #6c757d !important; opacity: 0.6; }
+.completed-text { text-decoration: line-through !important; color: #6c757d !important; }
+
+/* --- КОЛЕСО БАЛАНСА (ВОЗВРАЩАЕМ КРАСОТУ) --- */
+.wheel-card {
+    background: #ffffff;
+    padding: 40px; /* Вернули простор */
+    border-radius: 24px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.wheel-title {
+    font-size: 28px;
+    font-weight: 800;
+    margin-bottom: 30px;
+    border-bottom: 3px solid #28a745;
+    padding-bottom: 10px;
+}
+
+.canvas-wrapper {
+    width: 550px;
+    height: 550px;
+    position: relative;
+    /* Центрируем canvas внутри wrapper если нужно */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    margin-top: 120px !important;
+    position: relative;
+    z-index: 1;
+}
+
+.auth-container {
+    margin-top: 150px !important;
+    text-align: center;
+}
+
+
+/* --- FOOTER --- */
+.site-footer { background-color: #ffffff; color: #333; padding: 60px 0 20px; border-top: 1px solid #eee; }
+.footer-content { max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; padding: 0 40px; }
+.footer-section h3 { color: #28a745; font-size: 18px; margin-bottom: 20px; text-transform: uppercase; }
+.footer-section p { line-height: 1.6; color: #666; font-size: 14px; }
+.footer-section.inspiration a { color: #28a745; text-decoration: none; font-weight: bold; }
+.social-links { margin-top: 15px; font-size: 14px; color: #28a745; }
+.footer-bottom { text-align: center; margin-top: 60px; padding-top: 20px; border-top: 1px solid #f5f5f5; font-size: 12px; color: #999; }
+
+/* --- АДАПТИВ --- */
+@media (max-width: 1200px) {
+    .main-content-layout, .diary-wheel-layout { flex-direction: column; padding: 0 20px; }
+    .tasks-column, .habits-column, .diary-section, .wheel-section-new { width: 100%; }
 }
