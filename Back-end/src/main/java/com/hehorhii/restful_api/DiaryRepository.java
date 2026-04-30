@@ -6,6 +6,5 @@ import java.util.List;
 
 @Repository
 public interface DiaryRepository extends JpaRepository<Diary, Long> {
-    // Важно: имя метода должно соответствовать полю в сущности (userId)
     List<Diary> findByUserId(Long userId);
 }

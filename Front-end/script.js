@@ -93,9 +93,8 @@ function updateProgressBar(tasks) {
 
 async function addTask() {
     const userId = localStorage.getItem('userId');
-    // ПРОВЕРКА: Если гость пытается добавить задачу
     if (!userId || userId === "null") {
-        return alert("Пожалуйста, войдите в систему, чтобы добавлять задачи!");
+        return alert("Please login!");
     }
 
     const descInput = document.getElementById('taskInput');
@@ -181,7 +180,7 @@ function setupWheelClick() {
 
     canvas.addEventListener('click', async (event) => {
         const userId = localStorage.getItem('userId');
-        if (!userId) return alert("Please login!");
+        if (!userId) return alert("Please login or register!");
 
         const rect = canvas.getBoundingClientRect();
         const x = event.clientX - rect.left - canvas.width / 2;
@@ -314,7 +313,7 @@ async function addHabit() {
 
     // ПРОВЕРКА: Если гость пытается добавить привычку
     if (!userId || userId === "null") {
-        return alert("Пожалуйста, войдите в систему, чтобы отслеживать привычки!");
+        return alert("Please login or register!");
     }
 
     if (!input.value.trim()) return;
@@ -417,7 +416,7 @@ async function loadDiary() {
 async function addDiaryEntry(event) {
     event.preventDefault();
     const userId = localStorage.getItem('userId');
-    if (!userId) return alert("Войдите в систему");
+    if (!userId) return alert("Please login or register!");
     const entry = {
         userId: parseInt(userId),
         title: document.getElementById('diaryTitle').value,

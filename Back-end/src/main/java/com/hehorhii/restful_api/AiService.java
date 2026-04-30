@@ -28,8 +28,8 @@ public class AiService {
         requestBody.put("model", "llama-3.1-8b-instant"); // Актуальная модель
 
         List<Map<String, String>> messages = new ArrayList<>();
-        messages.add(Map.of("role", "system", "content", "Ты — мотивационный коуч. Напиши одну короткую, мощную цитату на русском языке. Только текст цитаты, без кавычек и лишних слов."));
-        messages.add(Map.of("role", "user", "content", "Дай мотивацию на сегодня."));
+        messages.add(Map.of("role", "system", "content", "Ты — мотивационный коуч. Напиши одну короткую, мощную цитату на Итальянском языке. Только текст цитаты, без кавычек и лишних слов."));
+        messages.add(Map.of("role", "user", "content", "Дай мотивацию на сегодня, на итальянском языке."));
 
         requestBody.put("messages", messages);
         requestBody.put("temperature", 0.7);

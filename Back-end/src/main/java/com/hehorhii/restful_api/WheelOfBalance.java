@@ -25,79 +25,60 @@ public class WheelOfBalance {
     public void setId(Long id) {
         this.id = id;
     }
-
     public Long getId() {
         return id;
     }
-
     public void setUserId(Long userId) {
         this.userId = userId;
     }
-
     public Long getUserId() {
         return userId;
     }
-
     public int getHealth() {
         return health;
     }
-
     public int getFamily() {
         return family;
     }
-
     public int getWork() {
         return work;
     }
-
     public int getFinance() {
         return finance;
     }
-
     public int getLearning() {
         return learning;
     }
-
     public int getRest() {
         return rest;
     }
-
     public int getFriends() {
         return friends;
     }
-
     public int getSpiritual() {
         return spiritual;
     }
-
     public void setHealth(int health) {
         this.health = health;
     }
-
     public void setFamily(int family) {
         this.family = family;
     }
-
     public void setWork(int work) {
         this.work = work;
     }
-
     public void setFinance(int finance) {
         this.finance = finance;
     }
-
     public void setLearning(int learning) {
         this.learning = learning;
     }
-
     public void setRest(int rest) {
         this.rest = rest;
     }
-
     public void setFriends(int friends) {
         this.friends = friends;
     }
-
     public void setSpiritual(int spiritual) {
         this.spiritual = spiritual;
     }

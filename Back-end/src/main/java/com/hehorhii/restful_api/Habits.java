@@ -9,6 +9,7 @@ public class Habits {
     private Long id;
 
     private Long userId;
+    @Column(columnDefinition = "NVARCHAR(255)")
     private String name;
     private Long streak;
     private String current_days;
