@@ -22,13 +22,13 @@ body {
     font-weight: 700;
     color: #333;
     font-style: italic;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.9px;
     line-height: 1.4;
 }
 
 /* Каретка печатной машинки */
 .quote-text::after {
-    content: '|';
+    content: '|'; /* Добавляем символ каретки */
     margin-left: 5px;
     color: #28a745;
     animation: blink 0.7s infinite;
@@ -79,15 +79,15 @@ body {
     white-space: nowrap;
 }
 
-/* Кнопки REGISTER / LOGIN */
+/* buttons REGISTER / LOGIN */
 .nav-btns button:first-child { background-color: #28a745 !important; color: white !important; border: 2px solid #28a745 !important; }
 .nav-btns button:first-child:hover { background-color: #218838 !important; box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3) !important; }
 .nav-btns button:last-child { background-color: white !important; color: #555 !important; border: 2px solid #ddd !important; }
 .nav-btns button:last-child:hover { background-color: #f8f9fa !important; border-color: #bbb !important; color: #333 !important; }
 
 .auth-container {
-    max-width: 450px !important; /* Ограничиваем ширину, чтобы не было "растянуто" */
-    margin: 150px auto 50px !important; /* Центрируем по горизонтали */
+    max-width: 450px !important;
+    margin: 150px auto 50px !important;
     text-align: center;
     padding: 40px;
     background: white;
@@ -122,9 +122,9 @@ body {
 .main-content-layout, .diary-wheel-layout {
     display: flex;
     gap: 30px;
-    max-width: 1400px;
-    margin: 0 auto 30px; /* Отступ между блоками */
-    padding: 0 40px;
+    max-width: 2000px;
+    margin: 0 auto 60px; /* Отступ между блоками */
+    padding: 20px 40px 0; /* Добавляем padding-top для лучшего отделения от цитаты */
     box-sizing: border-box;
     align-items: flex-start;
 }
@@ -145,6 +145,7 @@ body {
     box-shadow: 0 4px 15px rgba(0,0,0,0.1);
     position: relative;
     z-index: 1;
+    margin-bottom: 30px; /* Добавляем отступ снизу для лучшего разделения секций */
 }
 
 h2 { color: #333; text-align: center; font-weight: 800; margin-top: 0; margin-bottom: 25px; }
@@ -284,25 +285,11 @@ li:hover { transform: translateX(10px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); 
     align-items: center;
 }
 
-.container {
-    background: white;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    margin-top: 120px !important;
-    position: relative;
-    z-index: 1;
-}
-
-.auth-container {
-    margin-top: 150px !important;
-    text-align: center;
-}
 
 
 /* --- FOOTER --- */
-.site-footer { background-color: #ffffff; color: #333; padding: 60px 0 20px; border-top: 1px solid #eee; }
-.footer-content { max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; padding: 0 40px; }
+.site-footer { background-color: #ffffff; color: #333; padding: 60px 0 20px; border-bottom: 10px solid #28a745;}
+.footer-content { max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 250px; padding: 0 40px; }
 .footer-section h3 { color: #28a745; font-size: 18px; margin-bottom: 20px; text-transform: uppercase; }
 .footer-section p { line-height: 1.6; color: #666; font-size: 14px; }
 .footer-section.inspiration a { color: #28a745; text-decoration: none; font-weight: bold; }
@@ -311,6 +298,25 @@ li:hover { transform: translateX(10px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); 
 
 /* --- АДАПТИВ --- */
 @media (max-width: 1200px) {
-    .main-content-layout, .diary-wheel-layout { flex-direction: column; padding: 0 20px; }
+    .main-content-layout, .diary-wheel-layout { flex-direction: column; padding: 0 20px; gap: 20px; }
     .tasks-column, .habits-column, .diary-section, .wheel-section-new { width: 100%; }
+    .quote-container { padding: 0 20px; }
+    .container { padding: 20px; }
+    .wheel-card { padding: 20px; }
+    .canvas-wrapper { width: 100%; height: 400px; max-width: 400px; }
+}
+
+@media (max-width: 768px) {
+    body { padding-top: 80px; }
+    .header { height: 60px; padding: 10px 3%; }
+    .logo { font-size: 1.2rem !important; }
+    .nav-btns { gap: 10px; }
+    .nav-btns button { padding: 6px 15px !important; font-size: 12px !important; }
+    .quote-container { padding: 0 15px; margin-bottom: 20px; }
+    .quote-text { font-size: 18px; }
+    .main-content-layout, .diary-wheel-layout { padding: 10px 15px 0; gap: 15px; }
+    .container { padding: 15px; margin-bottom: 20px; }
+    .wheel-card { padding: 15px; }
+    .canvas-wrapper { height: 300px; max-width: 300px; }
+    .footer-content { grid-template-columns: 1fr; gap: 20px; padding: 0 15px; }
 }

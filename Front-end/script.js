@@ -383,7 +383,19 @@ async function checkWeekCompletion(habitId) {
 function formatStreak(weeks) {
     const w = parseInt(weeks) || 0;
     if (w <= 0) return "0 недель";
-    return w < 4 ? `${w} нед.` : `${Math.floor(w / 4)} мес.`;
+
+    const months = Math.floor(w / 4);
+    const remainingWeeks = w % 4;
+
+    if (months > 0) {
+        if (remainingWeeks > 0) {
+            return `${months} мес. ${remainingWeeks} нед.`;
+        } else {
+            return `${months} мес.`;
+        }
+    } else {
+        return `${remainingWeeks} нед.`;
+    }
 }
 
 async function deleteHabit(id) {
@@ -499,3 +511,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const taskForm = document.getElementById('taskForm');
     if (taskForm) taskForm.addEventListener('submit', (e) => { e.preventDefault(); addTask(); });
 });
+
+
+

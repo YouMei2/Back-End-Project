@@ -4,7 +4,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "http://localhost:63342")
 @RequestMapping("/diary")
 public class DiaryController {
     private final DiaryRepository diaryRepository;
