@@ -2,6 +2,10 @@ package com.hehorhii.restful_api;
 
 import jakarta.persistence.*;
 
+/**
+ * Habits entity representing a habit in the application.
+ * This class maps to the habits table in the database.
+ */
 @Entity
 public class Habits {
     @Id
@@ -9,13 +13,14 @@ public class Habits {
     private Long id;
 
     private Long userId;
-    @Column(columnDefinition = "NVARCHAR(255)")
     private String name;
     private Long streak;
     private String current_days;
 
+    // Default constructor
     public Habits(){}
 
+    // Setters for habit properties
     public void setId(Long id) {
         this.id = id;
     }
@@ -36,6 +41,7 @@ public class Habits {
         this.current_days = current_days;
     }
 
+    // Getters for habit properties
     public Long getId() {
         return id;
     }

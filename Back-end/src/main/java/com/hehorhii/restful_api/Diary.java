@@ -3,19 +3,21 @@ package com.hehorhii.restful_api;
 import jakarta.persistence.*;
 import java.sql.Timestamp;
 
+// Diary entity representing a diary entry in the application.
+// This class maps to the diary table in the database.
 @Entity
 public class Diary {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Long userId;
-    @Column(columnDefinition = "NVARCHAR(MAX)")
     private String title;
     private String mood;
-    @Column(columnDefinition = "NVARCHAR(MAX)")
+    @Column(columnDefinition = "TEXT")
     private String content;
     private Timestamp created_at;
 
+    // Getters and setters for diary entry properties
     public Long getId() {
         return id;
     }

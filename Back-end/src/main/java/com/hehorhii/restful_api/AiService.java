@@ -6,6 +6,8 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.http.*;
 import java.util.*;
 
+// AiService handles AI-powered quote generation using Groq API.
+// This service generates motivational quotes in different languages.
 @Service
 public class AiService {
 
@@ -15,21 +17,21 @@ public class AiService {
     @Value("${groq.api.url}")
     private String apiUrl;
 
+    // Generates a motivational quote using AI
     public String generateQuote() {
         RestTemplate restTemplate = new RestTemplate();
 
-        // Настраиваем заголовки
+        // Set up headers
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setBearerAuth(apiKey);
 
-        // Формируем тело запроса (JSON)
+        // Form the request body (JSON)
         Map<String, Object> requestBody = new HashMap<>();
-        requestBody.put("model", "llama-3.1-8b-instant"); // Актуальная модель
+        requestBody.put("model", "llama-3.1-8b-instant"); // Current model
 
         List<Map<String, String>> messages = new ArrayList<>();
-        messages.add(Map.of("role", "system", "content", "Ты — мотивационный коуч. Напиши одну короткую, мощную цитату на Итальянском языке. Только текст цитаты, без кавычек и лишних слов."));
-        messages.add(Map.of("role", "user", "content", "Дай мотивацию на сегодня, на итальянском языке."));
+        messages.add(Map.of("role", "system", "content", "You are a motivational coach. Write one short, powerful quote. Only the quote text, without quotes and extra words."));
 
         requestBody.put("messages", messages);
         requestBody.put("temperature", 0.7);
@@ -39,15 +41,15 @@ public class AiService {
         try {
             ResponseEntity<Map> response = restTemplate.postForEntity(apiUrl, entity, Map.class);
 
-            // Парсим ответ (Groq возвращает структуру как у OpenAI)
+            // Parse response (Groq returns structure like OpenAI)
             List choices = (List) response.getBody().get("choices");
             Map firstChoice = (Map) choices.get(0);
             Map message = (Map) firstChoice.get("message");
 
             return message.get("content").toString();
         } catch (Exception e) {
-            System.err.println("Ошибка AI: " + e.getMessage());
-            return "Дисциплина — это мост между целями и достижениями."; // Фолбэк
+            System.err.println("AI Error: " + e.getMessage());
+            return "Discipline is the bridge between goals and accomplishments."; // Fallback
         }
     }
 }

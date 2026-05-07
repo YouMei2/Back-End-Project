@@ -13,28 +13,31 @@ import org.springframework.security.config.Customizer;
 import java.util.Arrays;
 import java.util.List;
 
+// SecurityConfig configures Spring Security settings for the application.
+// This configuration disables CSRF, enables CORS, and permits all requests for testing purposes.
 @Configuration
 public class SecurityConfig {
 
+    // Configures the security filter chain to disable CSRF and allow all requests
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .cors(Customizer.withDefaults()) // Включаем поддержку CORS
-                .csrf(AbstractHttpConfigurer::disable)    // Отключаем CSRF (причина 403 ошибки)
+                .cors(Customizer.withDefaults()) // Enable CORS support
+                .csrf(AbstractHttpConfigurer::disable)    // Disable CSRF (reason for 403 error)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/**").permitAll() // Разрешаем всё для тестов
+                        .requestMatchers("/**").permitAll() // Allow everything for testing
                         .anyRequest().permitAll()
                 );
         return http.build();
     }
 
-    // Этот бин принудительно разрешает запросы с твоего фронтенда
+    // This bean forcibly allows requests from your frontend
     @Bean
     public CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        // Разрешаем именно твой адрес фронтенда из ошибки
+        // Allow specifically frontend address from the error
         config.setAllowedOrigins(List.of("http://localhost:63342"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));

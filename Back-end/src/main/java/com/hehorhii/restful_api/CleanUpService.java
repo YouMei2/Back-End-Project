@@ -7,16 +7,19 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 
+// CleanUpService handles scheduled cleanup tasks for expired verification codes.
+// This service runs periodically to remove expired codes from user accounts.
 @Service
 public class CleanUpService {
     @Autowired
     private UserRepository userRepository;
 
+    // Scheduled method to clear expired verification codes every minute
     @Scheduled(fixedRate = 60000)
     public void clearExpiredCodes() {
         LocalDateTime tenMinutesAgo = LocalDateTime.now().minusMinutes(10);
 
-        // Находим всех юзеров, у которых есть код и он был создан более 10 минут назад
+        // Find all users with a code created more than 10 minutes ago
         List<User> expiredUsers = userRepository.findByCodeIsNotNullAndCodeCreatedAtBefore(tenMinutesAgo);
 
         for (User user : expiredUsers) {

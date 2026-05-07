@@ -3,15 +3,15 @@ const WHEEL_API = 'http://localhost:8080/wheel';
 const HABITS_API = 'http://localhost:8080/habits';
 const DIARY_API = 'http://localhost:8080/diary';
 
-// Переменные для пульсации (Твоя "Вишенка")
+// Pulsation variables
 let pulseOpacity = 0.2;
 let pulseDirection = 1;
 let currentWheelData = null;
 
-// --- СИСТЕМНЫЕ ФУНКЦИИ ---
+//  SYSTEM FUNCTIONS
 function checkAuth() {
     const userId = localStorage.getItem('userId');
-    const userName = localStorage.getItem('userName');
+    const userName = localStorage.getItem('userName'); // Retrieve name here
     const guestBtns = document.getElementById('guest-btns');
     const userProfile = document.getElementById('user-profile');
     const welcomeText = document.getElementById('welcome-text');
@@ -20,6 +20,7 @@ function checkAuth() {
         if (guestBtns) guestBtns.style.display = 'none';
         if (userProfile) {
             userProfile.style.display = 'flex';
+            // Use userName from local storage
             welcomeText.textContent = `Hello, ${userName || 'User'}!`;
         }
     } else {
@@ -33,13 +34,13 @@ function logout() {
     window.location.reload();
 }
 
-// --- ЛОГИКА ЗАДАЧ ---
+// TASK LOGIC
 async function loadTasks() {
     const userId = localStorage.getItem('userId');
     const list = document.getElementById('taskList');
     if (!list) return;
 
-    // Если гость — очищаем список и выходим
+    // If guest — clear the list and exit
     if (!userId || userId === "null") {
         list.innerHTML = '';
         updateProgressBar([]);
@@ -58,8 +59,8 @@ async function loadTasks() {
             if (isDone) li.classList.add('completed-task');
 
             const priorityLabels = {
-                'low': '🌱 Простая', 'medium': '⚡ Средняя',
-                'high': '🔥 Важная', 'goal': '🏆 Цель'
+                'low': '🌱 Simple', 'medium': '⚡ Medium',
+                'high': '🔥 Important', 'goal': '🏆 Goal'
             };
 
             li.innerHTML = `
@@ -67,10 +68,10 @@ async function loadTasks() {
                     <input type="checkbox" ${isDone ? 'checked' : ''} onchange="toggleTask(${task.id}, ${isDone})">
                     <div class="task-text ${isDone ? 'completed-text' : ''}">
                         <span class="priority-badge prio-${task.priority || 'low'}">
-                            ${priorityLabels[task.priority] || '🌱 Простая'}
+                            ${priorityLabels[task.priority] || '🌱 Simple'}
                         </span><br>
-                        <b>${task.name || 'БЕЗ КАТЕГОРИИ'}</b><br>
-                        ${task.description || 'Нет описания'}
+                        <b>${task.name || 'NO CATEGORY'}</b><br>
+                        ${task.description || 'No description'}
                     </div>
                 </div>
                 <button class="btn-delete" onclick="deleteTask(${task.id})">Delete</button>
@@ -78,7 +79,7 @@ async function loadTasks() {
             list.appendChild(li);
         });
         updateProgressBar(tasks);
-    } catch (err) { console.error("Ошибка задач:", err); }
+    } catch (err) { console.error("Task error:", err); }
 }
 
 function updateProgressBar(tasks) {
@@ -94,7 +95,7 @@ function updateProgressBar(tasks) {
 async function addTask() {
     const userId = localStorage.getItem('userId');
     if (!userId || userId === "null") {
-        return alert("Please login!");
+        return alert("Please login or register!");
     }
 
     const descInput = document.getElementById('taskInput');
@@ -138,22 +139,22 @@ async function deleteTask(id) {
     }
 }
 
-// --- КОЛЕСО ЖИЗНИ (БЕЗ ИЗМЕНЕНИЙ ПО ТВОЕЙ ПРОСЬБЕ) ---
+//  WHEEL OF LIFE
 async function loadWheelData() {
     const userId = localStorage.getItem('userId');
 
     const defaultData = [
-        { label: 'Здоровье и спорт', key: 'health', score: 0 },
-        { label: 'Друзья и окружение', key: 'friends', score: 0 },
-        { label: 'Отношения', key: 'family', score: 0 },
-        { label: 'Карьера и бизнес', key: 'work', score: 0 },
-        { label: 'Финансы', key: 'finance', score: 0 },
-        { label: 'Духовность и творчество', key: 'spiritual', score: 0 },
-        { label: 'Личностный рост', key: 'learning', score: 0 },
-        { label: 'Яркость жизни', key: 'rest', score: 0 }
+        { label: 'Health and Sports', key: 'health', score: 0 },
+        { label: 'Friends and Environment', key: 'friends', score: 0 },
+        { label: 'Relationships', key: 'family', score: 0 },
+        { label: 'Career and Business', key: 'work', score: 0 },
+        { label: 'Finance', key: 'finance', score: 0 },
+        { label: 'Spirituality and Creativity', key: 'spiritual', score: 0 },
+        { label: 'Personal Growth', key: 'learning', score: 0 },
+        { label: 'Life Brightness', key: 'rest', score: 0 }
     ];
 
-    // Если пользователя нет, сразу рисуем пустое колесо и выходим
+    // If user doesn't exist, draw empty wheel and exit
     if (!userId || userId === "null") {
         currentWheelData = defaultData;
         renderPerfectWheel('balanceChart', defaultData);
@@ -168,7 +169,7 @@ async function loadWheelData() {
         currentWheelData = wheelData;
         renderPerfectWheel('balanceChart', wheelData);
     } catch (err) {
-        console.warn("Бэкенд недоступен или ошибка, рисую дефолт.");
+        console.warn("Backend unavailable or error, drawing default.");
         currentWheelData = defaultData;
         renderPerfectWheel('balanceChart', defaultData);
     }
@@ -287,13 +288,13 @@ function renderPerfectWheel(canvasId, data) {
     if (!window.isWheelAnimating) { window.isWheelAnimating = true; draw(); }
 }
 
-// --- ПРИВЫЧКИ ---
+// HABITS
 async function loadHabits() {
     const userId = localStorage.getItem('userId');
     const habitList = document.getElementById('habitList');
     if (!habitList) return;
 
-    // Если гость — очищаем список и выходим
+    // If guest — clear the list and exit
     if (!userId || userId === "null") {
         habitList.innerHTML = '';
         return;
@@ -304,14 +305,14 @@ async function loadHabits() {
         const habits = await response.json();
         habitList.innerHTML = '';
         habits.forEach(habit => renderHabitItem(habit));
-    } catch (err) { console.error("Ошибка загрузки привычек:", err); }
+    } catch (err) { console.error("Habit loading error:", err); }
 }
 
 async function addHabit() {
     const input = document.getElementById('habitInput');
     const userId = localStorage.getItem('userId');
 
-    // ПРОВЕРКА: Если гость пытается добавить привычку
+    // CHECK: If guest tries to add a habit
     if (!userId || userId === "null") {
         return alert("Please login or register!");
     }
@@ -330,7 +331,7 @@ async function addHabit() {
             })
         });
         if (response.ok) { input.value = ''; await loadHabits(); }
-    } catch (err) { console.error("Ошибка добавления:", err); }
+    } catch (err) { console.error("Addition error:", err); }
 }
 
 function renderHabitItem(habit) {
@@ -341,7 +342,7 @@ function renderHabitItem(habit) {
     li.id = `habit-${habit.id}`;
     li.setAttribute('data-streak', habit.streak || 0);
 
-    const daysHtml = ['ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ', 'ВС'].map(day => `
+    const daysHtml = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'].map(day => `
         <div class="day-wrapper">
             <span class="day-label">${day}</span>
             <input type="checkbox" class="day-check" onchange="checkWeekCompletion(${habit.id})">
@@ -382,19 +383,19 @@ async function checkWeekCompletion(habitId) {
 
 function formatStreak(weeks) {
     const w = parseInt(weeks) || 0;
-    if (w <= 0) return "0 недель";
+    if (w <= 0) return "0 weeks";
 
     const months = Math.floor(w / 4);
     const remainingWeeks = w % 4;
 
     if (months > 0) {
         if (remainingWeeks > 0) {
-            return `${months} мес. ${remainingWeeks} нед.`;
+            return `${months} mo. ${remainingWeeks} wk.`;
         } else {
-            return `${months} мес.`;
+            return `${months} mo.`;
         }
     } else {
-        return `${remainingWeeks} нед.`;
+        return `${remainingWeeks} wk.`;
     }
 }
 
@@ -405,7 +406,7 @@ async function deleteHabit(id) {
     } catch (err) { console.error(err); }
 }
 
-// --- ДНЕВНИК ---
+// --- DIARY ---
 async function loadDiary() {
     const userId = localStorage.getItem('userId');
     const log = document.getElementById('diaryLog');
@@ -414,7 +415,7 @@ async function loadDiary() {
         const response = await fetch(`${DIARY_API}?userId=${userId}`);
         const entries = await response.json();
         log.innerHTML = entries.map(item => {
-            const dateStr = item.created_at ? new Date(item.created_at).toLocaleDateString('ru-RU') : 'Сегодня';
+            const dateStr = item.created_at ? new Date(item.created_at).toLocaleDateString('en-US') : 'Today';
             return `
                 <div class="diary-entry">
                     <div class="diary-entry-header"><span>${dateStr}</span><span>${item.mood}</span></div>
@@ -422,7 +423,7 @@ async function loadDiary() {
                     <button class="btn-delete" onclick="deleteDiaryEntry(${item.id})">×</button>
                 </div>`;
         }).join('');
-    } catch (err) { console.error("Ошибка дневника:", err); }
+    } catch (err) { console.error("Diary error:", err); }
 }
 
 async function addDiaryEntry(event) {
@@ -442,18 +443,18 @@ async function addDiaryEntry(event) {
             body: JSON.stringify(entry)
         });
         if (response.ok) { event.target.reset(); await loadDiary(); }
-    } catch (err) { console.error("Ошибка сохранения:", err); }
+    } catch (err) { console.error("Save error:", err); }
 }
 
 async function deleteDiaryEntry(id) {
-    if (confirm('Удалить запись?')) {
+    if (confirm('Delete entry?')) {
         await fetch(`${DIARY_API}/${id}`, { method: 'DELETE' });
         await loadDiary();
     }
 }
 
-// --- ИНИЦИАЛИЗАЦИЯ (ЕДИНЫЙ БЛОК) ---
-// --- ЦИТАТЫ (Теперь через ИИ) ---
+// --- INITIALIZATION (SINGLE BLOCK) ---
+// --- QUOTES (Via AI) ---
 async function initTypewriter() {
     const textElement = document.getElementById('typewriter-quote');
     if (!textElement) return;
@@ -461,7 +462,7 @@ async function initTypewriter() {
     let quote = "";
 
     try {
-        // Запрос к твоему будущему эндпоинту
+        // Request to your future endpoint
         const response = await fetch('http://localhost:8080/ai-quote');
         if (response.ok) {
             quote = await response.text();
@@ -469,16 +470,16 @@ async function initTypewriter() {
             throw new Error();
         }
     } catch (err) {
-        // Фолбэк (запасной вариант), если сервер лег или ИИ не ответил
+        // Fallback (backup option) if server is down or AI didn't respond
         const fallbackQuotes = [
-            "Дисциплина — ключ к успеху.",
-            "Твой единственный предел — это ты сам.",
-            "Маленькие шаги ведут к цели."
+            "Discipline is the key to success.",
+            "Your only limit is yourself.",
+            "Small steps lead to the goal."
         ];
         quote = fallbackQuotes[Math.floor(Math.random() * fallbackQuotes.length)];
     }
 
-    // Очищаем текст перед началом анимации
+    // Clear text before starting animation
     textElement.textContent = "";
 
     let i = 0;
@@ -491,12 +492,12 @@ async function initTypewriter() {
     type();
 }
 
-const quotes = ["Дисциплина — ключ к успеху.", "Твой единственный предел — это ты сам.", "Маленькие шаги ведут к цели."];
+const quotes = ["Discipline is the key to success.", "Your only limit is yourself.", "Small steps lead to the goal."];
 
 document.addEventListener('DOMContentLoaded', () => {
     checkAuth();
 
-    // Запускаем всё. Функции сами поймут, гость перед ними или юзер.
+    // Start everything. Functions will automatically detect guest vs user.
     loadTasks();
     loadWheelData();
     loadHabits();
@@ -511,6 +512,3 @@ document.addEventListener('DOMContentLoaded', () => {
     const taskForm = document.getElementById('taskForm');
     if (taskForm) taskForm.addEventListener('submit', (e) => { e.preventDefault(); addTask(); });
 });
-
-
-

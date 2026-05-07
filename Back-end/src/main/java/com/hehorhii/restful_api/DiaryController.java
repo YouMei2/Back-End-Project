@@ -3,33 +3,36 @@ package com.hehorhii.restful_api;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
+// DiaryController handles diary-related operations.
+// This REST controller provides endpoints for managing user diary entries.
 @RestController
 @CrossOrigin(origins = "http://localhost:63342")
 @RequestMapping("/diary")
 public class DiaryController {
     private final DiaryRepository diaryRepository;
 
+    // Constructor injecting DiaryRepository dependency
     public DiaryController(DiaryRepository diaryRepository) {
         this.diaryRepository = diaryRepository;
     }
 
-    // Получить все записи конкретного пользователя
+    // Get all diary entries for a specific user
     @GetMapping
     public List<Diary> getUserDiary(@RequestParam(name = "userId") Long userId) {
         return diaryRepository.findByUserId(userId);
     }
 
-    // Создать новую запись
+    // Create a new diary entry
     @PostMapping
     public Diary createEntry(@RequestBody Diary diary) {
         return diaryRepository.save(diary);
     }
 
-    // Редактировать существующую запись (по ID)
+    // Update an existing diary entry by ID
     @PutMapping("/{id}")
     public Diary updateEntry(@PathVariable("id") Long id, @RequestBody Diary updatedData) {
         Diary entry = diaryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Запись не найдена"));
+                .orElseThrow(() -> new RuntimeException("Entry not found"));
 
         if (updatedData.getTitle() != null) entry.setTitle(updatedData.getTitle());
         if (updatedData.getMood() != null) entry.setMood(updatedData.getMood());
@@ -38,7 +41,7 @@ public class DiaryController {
         return diaryRepository.save(entry);
     }
 
-    // Удалить запись
+    // Delete a diary entry
     @DeleteMapping("/{id}")
     public void deleteEntry(@PathVariable("id") Long id) {
         diaryRepository.deleteById(id);

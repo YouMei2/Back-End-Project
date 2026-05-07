@@ -45,9 +45,16 @@ if (loginForm) {
                 // Redirect the user to the main tasks page
                 window.location.href = 'index.html';
             } else {
-                // Get the error message from the server response
                 const errMsg = await response.text();
-                alert('Login failed: ' + errMsg);
+
+                // ADDED: Intercept 401 error from your Java controller
+                if (response.status === 401 && errMsg.includes("verify")) {
+                    alert('Please verify your email first!');
+                    localStorage.setItem('emailForVerification', loginData.email);
+                    window.location.href = 'verify.html';
+                } else {
+                    alert('Login failed: ' + errMsg);
+                }
             }
         } catch (err) {
             // Log connection errors to the console

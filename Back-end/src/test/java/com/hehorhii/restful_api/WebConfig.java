@@ -6,9 +6,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+// WebConfig configures CORS settings for the web application.
+// This configuration allows cross-origin requests from specified origins for testing purposes.
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
+    // Configures CORS mappings to allow requests from local development servers
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")

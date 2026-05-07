@@ -2,6 +2,10 @@ package com.hehorhii.restful_api;
 
 import jakarta.persistence.*;
 
+/**
+ * WheelOfBalance entity representing the wheel of life balance assessment for a user.
+ * This class maps to the Wheel_of_balance table in the database.
+ */
 @Entity
 @Table(name = "Wheel_of_balance")
 
@@ -20,8 +24,10 @@ public class WheelOfBalance {
     private int friends = 0;
     private int spiritual = 0;
 
+    // Default constructor
     public WheelOfBalance() {}
 
+    // Getters and setters for wheel of balance properties
     public void setId(Long id) {
         this.id = id;
     }

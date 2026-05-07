@@ -1,21 +1,24 @@
 package com.hehorhii.restful_api;
 
 import jakarta.persistence.*;
+// Task entity representing a task in the application.
+// This class maps to the task table in the database.
 @Entity
 public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(columnDefinition = "NVARCHAR(255)")
     private String description;
-    @Column(columnDefinition = "NVARCHAR(255)")
     private String name;
     private boolean isDone = false;
     private Long userId;
     private String priority;
 
+    // Default constructor
     public Task() {
     }
+
+    // Getters and setters for task properties
     public Long getId() {
         return id;
     }

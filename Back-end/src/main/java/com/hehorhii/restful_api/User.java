@@ -4,13 +4,14 @@ import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 
+// User entity representing a user in the application.
+// This class maps to the app_users table in the database.
 @Entity
 @Table(name = "app_users")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "username", columnDefinition = "NVARCHAR(255)")
     private String user;
     private String email;
     private String password;
@@ -19,9 +20,10 @@ public class User {
     @Column(name = "code_created_at", columnDefinition = "DATETIME")
     private LocalDateTime codeCreatedAt;
 
-    // constructor
+    // Default constructor
     public User() {}
 
+    // Getters and setters for user properties
     public void setId(Long id) {
         this.id = id;
     }
