@@ -1,7 +1,36 @@
-const API_URL = 'http://localhost:8080/tasks';
-const WHEEL_API = 'http://localhost:8080/wheel';
-const HABITS_API = 'http://localhost:8080/habits';
-const DIARY_API = 'http://localhost:8080/diary';
+const API_URL = 'https://wheel-web-site-api-apfhdfbxd7dud0cj.austriaeast-01.azurewebsites.net/tasks';
+const WHEEL_API = 'https://wheel-web-site-api-apfhdfbxd7dud0cj.austriaeast-01.azurewebsites.net/wheel';
+const HABITS_API = 'https://wheel-web-site-api-apfhdfbxd7dud0cj.austriaeast-01.azurewebsites.net/habits';
+const DIARY_API = 'https://wheel-web-site-api-apfhdfbxd7dud0cj.austriaeast-01.azurewebsites.net/diary';
+
+// --- Authentication Guard ---
+// Checks if the user is logged in. If not, redirects to the registration page.
+(function() {
+    const currentUserId = localStorage.getItem('userId');
+    const path = window.location.pathname.toLowerCase();
+
+    // 1. Define Public Pages
+    const isLoginPage = path.includes('login.html');
+    const isRegisterPage = path.includes('register.html');
+    const isVerifyPage = path.includes('verify.html');
+    
+    // 2. Enhanced Root/Home Page Detection
+    // Checks for: site root, trailing slash, index file, or the repository folder name
+    const isRoot = path === '/' || 
+                   path.endsWith('/') || 
+                   path.endsWith('index.html') || 
+                   path.endsWith('/frontend'); 
+
+    const isPublicPage = isLoginPage || isRegisterPage || isVerifyPage || isRoot;
+
+    // 3. Redirection Logic
+    if (!currentUserId && !isPublicPage) {
+        console.log("Access denied. Unauthorized path: " + path);
+        // Use replace to prevent the user from getting stuck in a back-button loop
+        window.location.replace('register.html');
+    }
+})();
+
 
 // Pulsation variables
 let pulseOpacity = 0.2;
@@ -31,7 +60,7 @@ function checkAuth() {
 
 function logout() {
     localStorage.clear();
-    window.location.reload();
+    window.location.replace("login.html");
 }
 
 // TASK LOGIC
@@ -463,7 +492,7 @@ async function initTypewriter() {
 
     try {
         // Request to your future endpoint
-        const response = await fetch('http://localhost:8080/ai-quote');
+        const response = await fetch('https://wheel-web-site-api-apfhdfbxd7dud0cj.austriaeast-01.azurewebsites.net/ai-quote');
         if (response.ok) {
             quote = await response.text();
         } else {

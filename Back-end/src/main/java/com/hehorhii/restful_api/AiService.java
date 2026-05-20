@@ -31,7 +31,14 @@ public class AiService {
         requestBody.put("model", "llama-3.1-8b-instant"); // Current model
 
         List<Map<String, String>> messages = new ArrayList<>();
-        messages.add(Map.of("role", "system", "content", "You are a motivational coach. Write one short, powerful quote. Only the quote text, without quotes and extra words."));
+        messages.add(Map.of(
+                "role",
+                "system",
+                "content",
+                "You are a motivational coach." +
+                        "Write one short, powerful quote." +
+                        "Only the quote text, without quotes and extra words." +
+                        "always do the phrases, much different from previous one."));
 
         requestBody.put("messages", messages);
         requestBody.put("temperature", 0.7);

@@ -37,8 +37,12 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        // Allow specifically frontend address from the error
-        config.setAllowedOrigins(List.of("http://localhost:63342"));
+
+        // list of permitted sites
+        config.setAllowedOrigins(List.of(
+                "https://youmei2.github.io"
+        ));
+
         config.setAllowedHeaders(List.of("*"));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         source.registerCorsConfiguration("/**", config);

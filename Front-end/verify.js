@@ -1,4 +1,33 @@
-const VERIFY_API = 'http://localhost:8080/user/verify';
+const VERIFY_API = 'https://wheel-web-site-api-apfhdfbxd7dud0cj.austriaeast-01.azurewebsites.net/user/verify';
+
+// --- Authentication Guard ---
+// Checks if the user is logged in. If not, redirects to the registration page.
+(function() {
+    const currentUserId = localStorage.getItem('userId');
+    const path = window.location.pathname.toLowerCase();
+
+    // 1. Define Public Pages
+    const isLoginPage = path.includes('login.html');
+    const isRegisterPage = path.includes('register.html');
+    const isVerifyPage = path.includes('verify.html');
+    
+    // 2. Enhanced Root/Home Page Detection
+    // Checks for: site root, trailing slash, index file, or the repository folder name
+    const isRoot = path === '/' || 
+                   path.endsWith('/') || 
+                   path.endsWith('index.html') || 
+                   path.endsWith('/frontend'); 
+
+    const isPublicPage = isLoginPage || isRegisterPage || isVerifyPage || isRoot;
+
+    // 3. Redirection Logic
+    if (!currentUserId && !isPublicPage) {
+        console.log("Access denied. Unauthorized path: " + path);
+        // Use replace to prevent the user from getting stuck in a back-button loop
+        window.location.replace('register.html');
+    }
+})();
+
 
 document.addEventListener('DOMContentLoaded', () => {
     const displayEmail = document.getElementById('displayEmail');
@@ -12,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (verifyForm) {
-        verifyForm.addEventListener('submit', async (e) => {
+        verifyForm.addEventListener('submit', async(e) => {
             e.preventDefault();
 
             console.log("verification...");
@@ -66,11 +95,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-const RESEND_API = 'http://localhost:8080/user/resend-code';
+const RESEND_API = 'https://wheel-web-site-api-apfhdfbxd7dud0cj.austriaeast-01.azurewebsites.net/user/resend-code';
 const resendBtn = document.getElementById('resendBtn'); // Make sure the button has this ID
 
 if (resendBtn) {
-    resendBtn.addEventListener('click', async (e) => {
+    resendBtn.addEventListener('click', async(e) => {
         e.preventDefault();
 
         const email = localStorage.getItem('emailForVerification');

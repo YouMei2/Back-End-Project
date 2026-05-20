@@ -1,4 +1,34 @@
-const API_URL = 'http://localhost:8080/user';
+const API_URL = 'https://wheel-web-site-api-apfhdfbxd7dud0cj.austriaeast-01.azurewebsites.net/user';
+
+
+// --- Authentication Guard ---
+// Checks if the user is logged in. If not, redirects to the registration page.
+(function() {
+    const currentUserId = localStorage.getItem('userId');
+    const path = window.location.pathname.toLowerCase();
+
+    // 1. Define Public Pages
+    const isLoginPage = path.includes('login.html');
+    const isRegisterPage = path.includes('register.html');
+    const isVerifyPage = path.includes('verify.html');
+    
+    // 2. Enhanced Root/Home Page Detection
+    // Checks for: site root, trailing slash, index file, or the repository folder name
+    const isRoot = path === '/' || 
+                   path.endsWith('/') || 
+                   path.endsWith('index.html') || 
+                   path.endsWith('/frontend'); 
+
+    const isPublicPage = isLoginPage || isRegisterPage || isVerifyPage || isRoot;
+
+    // 3. Redirection Logic
+    if (!currentUserId && !isPublicPage) {
+        console.log("Access denied. Unauthorized path: " + path);
+        // Use replace to prevent the user from getting stuck in a back-button loop
+        window.location.replace('register.html');
+    }
+})();
+
 
 const registerForm = document.getElementById('registerForm');
 
